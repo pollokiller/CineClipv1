@@ -1,0 +1,1180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CineSpeak — Learn English Through Movies</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Outfit:wght@300;400;500;600&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0c0c10;
+  --surface: #14141c;
+  --card: #1a1a26;
+  --card2: #1e1e2e;
+  --border: #2c2c42;
+  --gold: #e8c547;
+  --gold2: #f5d878;
+  --pink: #e8478c;
+  --cyan: #47c5e8;
+  --green: #47e8a0;
+  --text: #f2f0ea;
+  --muted: #6e6e90;
+  --muted2: #9090b8;
+  --red: #e84747;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+
+/* GRAIN */
+body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");pointer-events:none;z-index:9999;opacity:.5}
+
+/* ── HEADER ── */
+header{padding:2rem 3rem 1.5rem;display:flex;align-items:center;gap:1.5rem;border-bottom:1px solid var(--border);position:relative;overflow:hidden}
+header::before{content:'CINESPEAK';position:absolute;right:-1rem;top:50%;transform:translateY(-50%);font-family:'Playfair Display',serif;font-size:8rem;font-weight:900;color:rgba(232,197,71,.04);pointer-events:none;white-space:nowrap}
+.logo-wrap{display:flex;flex-direction:column;gap:.1rem}
+.logo-eyebrow{font-family:'Fira Code',monospace;font-size:.6rem;color:var(--muted);letter-spacing:.3em;text-transform:uppercase}
+.logo{font-family:'Playfair Display',serif;font-size:2.8rem;font-weight:900;line-height:1;color:var(--text)}
+.logo em{color:var(--gold);font-style:italic}
+.header-tags{display:flex;gap:.5rem;margin-left:1.5rem;flex-wrap:wrap}
+.htag{font-family:'Fira Code',monospace;font-size:.58rem;padding:.2rem .6rem;border-radius:20px;letter-spacing:.08em;border:1px solid}
+.htag-tts{color:var(--cyan);border-color:rgba(71,197,232,.3);background:rgba(71,197,232,.06)}
+.htag-dict{color:var(--green);border-color:rgba(71,232,160,.3);background:rgba(71,232,160,.06)}
+.htag-quiz{color:var(--gold);border-color:rgba(232,197,71,.3);background:rgba(232,197,71,.06)}
+.htag-mic{color:var(--pink);border-color:rgba(232,71,140,.3);background:rgba(232,71,140,.06)}
+
+/* STATS BAR */
+.stats-bar{display:flex;align-items:center;gap:0;background:var(--surface);border-bottom:1px solid var(--border)}
+.stat{display:flex;align-items:center;gap:.8rem;padding:.9rem 2rem;border-right:1px solid var(--border);flex:1}
+.stat-num{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:700;color:var(--gold);line-height:1}
+.stat-label{font-family:'Fira Code',monospace;font-size:.55rem;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;line-height:1.4}
+.stat-bar-wrap{flex:3;padding:.9rem 2rem;display:flex;align-items:center;gap:1rem}
+.stat-bar-track{flex:1;height:3px;background:var(--border);border-radius:2px;overflow:hidden}
+.stat-bar-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--pink));border-radius:2px;width:0%;transition:width .6s ease}
+.stat-bar-pct{font-family:'Fira Code',monospace;font-size:.6rem;color:var(--muted);min-width:2.5rem;text-align:right}
+
+/* CONTROLS */
+.controls{display:flex;align-items:center;gap:.7rem;padding:1rem 3rem;border-bottom:1px solid var(--border);flex-wrap:wrap;background:rgba(20,20,28,.8)}
+.ctrl-group{display:flex;gap:.3rem;align-items:center}
+.ctrl-label{font-family:'Fira Code',monospace;font-size:.58rem;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-right:.2rem}
+.pill{font-family:'Fira Code',monospace;font-size:.6rem;letter-spacing:.08em;padding:.3rem .8rem;border:1px solid var(--border);background:none;color:var(--muted);border-radius:20px;cursor:pointer;transition:all .18s;white-space:nowrap}
+.pill:hover,.pill.on{border-color:var(--gold);color:var(--gold);background:rgba(232,197,71,.08)}
+.pill.on-cyan{border-color:var(--cyan);color:var(--cyan);background:rgba(71,197,232,.08)}
+.search-box{margin-left:auto;display:flex;align-items:center;gap:.5rem;background:var(--card);border:1px solid var(--border);border-radius:20px;padding:.3rem .9rem;transition:border-color .2s}
+.search-box:focus-within{border-color:var(--gold)}
+.search-box input{background:none;border:none;outline:none;color:var(--text);font-family:'Outfit',sans-serif;font-size:.8rem;width:180px}
+.search-box input::placeholder{color:var(--muted)}
+.search-icon{color:var(--muted);font-size:.8rem}
+.counter{font-family:'Fira Code',monospace;font-size:.6rem;color:var(--muted);padding:.4rem 3rem;border-bottom:1px solid var(--border);letter-spacing:.05em}
+
+/* GRID */
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.5rem;padding:1.5rem 3rem 5rem}
+
+/* ── CARD ── */
+.card{background:var(--card);border:1px solid var(--border);border-radius:6px;overflow:hidden;display:flex;flex-direction:column;transition:transform .25s,box-shadow .25s,border-color .25s;animation:fadeUp .4s ease both}
+.card:hover{transform:translateY(-3px);box-shadow:0 16px 50px rgba(0,0,0,.5);border-color:rgba(232,197,71,.25)}
+.card.hidden{display:none!important}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+/* CARD HEADER BAND */
+.card-band{padding:1rem 1.2rem .8rem;display:flex;align-items:flex-start;justify-content:space-between;gap:.8rem;border-bottom:1px solid var(--border);background:var(--card2)}
+.card-meta{display:flex;flex-direction:column;gap:.2rem}
+.card-title{font-family:'Playfair Display',serif;font-size:1.25rem;font-weight:700;line-height:1.1;color:var(--text)}
+.card-sub{font-family:'Fira Code',monospace;font-size:.58rem;color:var(--muted);letter-spacing:.08em}
+.badge{font-family:'Fira Code',monospace;font-size:.55rem;letter-spacing:.1em;text-transform:uppercase;padding:.2rem .6rem;border-radius:3px;border:1px solid;flex-shrink:0}
+.badge.beginner{color:var(--green);border-color:rgba(71,232,160,.35);background:rgba(71,232,160,.08)}
+.badge.intermediate{color:var(--gold);border-color:rgba(232,197,71,.35);background:rgba(232,197,71,.08)}
+.badge.advanced{color:var(--pink);border-color:rgba(232,71,140,.35);background:rgba(232,71,140,.08)}
+
+/* CARD BODY */
+.card-body{padding:1rem 1.2rem;display:flex;flex-direction:column;gap:.8rem;flex:1}
+
+/* DIALOGUE */
+.section-label{font-family:'Fira Code',monospace;font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:.5rem;margin-bottom:.4rem}
+.section-label::after{content:'';flex:1;height:1px;background:var(--border)}
+
+.dialogue{display:flex;flex-direction:column;gap:.35rem}
+.dline{display:flex;gap:.6rem;align-items:flex-start;padding:.5rem .7rem;background:rgba(255,255,255,.025);border-radius:4px;border-left:2px solid transparent;transition:all .15s;position:relative}
+.dline:hover{background:rgba(255,255,255,.04)}
+.dline.playing{border-left-color:var(--cyan);background:rgba(71,197,232,.06)}
+.dline.dictate-active{border-left-color:var(--green);background:rgba(71,232,160,.05)}
+.speaker{font-family:'Fira Code',monospace;font-size:.58rem;color:var(--pink);min-width:64px;padding-top:2px;text-transform:uppercase;letter-spacing:.06em;flex-shrink:0}
+.line-content{flex:1;display:flex;flex-direction:column;gap:.15rem}
+.en-text{font-size:.9rem;line-height:1.5;color:var(--text);font-weight:400;cursor:pointer;transition:color .15s}
+.en-text.blurred{filter:blur(5px);cursor:pointer}
+.en-text.blurred:hover{filter:blur(2px)}
+.es-text{font-size:.75rem;color:var(--muted);font-style:italic;line-height:1.4;display:none}
+.es-text.show{display:block}
+.dictate-input{width:100%;background:rgba(71,232,160,.06);border:1px solid rgba(71,232,160,.3);border-radius:3px;padding:.35rem .6rem;color:var(--text);font-family:'Outfit',sans-serif;font-size:.82rem;outline:none;margin-top:.3rem;display:none}
+.dictate-input.show{display:block}
+.dictate-result{font-family:'Fira Code',monospace;font-size:.65rem;margin-top:.2rem;display:none;padding:.2rem .4rem;border-radius:3px}
+.dictate-result.show{display:block}
+.dictate-result.ok{color:var(--green);background:rgba(71,232,160,.08)}
+.dictate-result.wrong{color:var(--red);background:rgba(232,71,71,.08)}
+
+/* LINE ACTIONS */
+.line-actions{display:flex;gap:.3rem;align-items:center;flex-shrink:0}
+.icon-btn{background:none;border:none;cursor:pointer;padding:.2rem;border-radius:3px;font-size:.85rem;opacity:.4;transition:all .15s;line-height:1}
+.icon-btn:hover{opacity:1;background:rgba(255,255,255,.06)}
+.icon-btn.active{opacity:1}
+.icon-btn.tts-active{color:var(--cyan)}
+.icon-btn.mic-active{color:var(--pink);animation:mic-pulse .6s ease-in-out infinite alternate}
+@keyframes mic-pulse{from{opacity:.7}to{opacity:1}}
+
+/* VOCAB */
+.vocab-wrap{display:flex;flex-wrap:wrap;gap:.4rem}
+.vchip{font-family:'Fira Code',monospace;font-size:.58rem;padding:.25rem .65rem;background:rgba(232,197,71,.07);border:1px solid rgba(232,197,71,.2);border-radius:20px;color:var(--gold);cursor:pointer;transition:all .18s;position:relative}
+.vchip:hover{background:rgba(232,197,71,.16);transform:translateY(-1px)}
+.vchip .tip{position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:var(--card2);border:1px solid var(--gold);border-radius:4px;padding:.4rem .7rem;font-size:.62rem;color:var(--text);white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .15s;z-index:100;font-family:'Outfit',sans-serif}
+.vchip:hover .tip{opacity:1}
+
+/* QUIZ */
+.quiz-box{background:rgba(71,197,232,.04);border:1px solid rgba(71,197,232,.15);border-radius:4px;padding:.8rem;display:none;margin-top:.2rem}
+.quiz-box.open{display:block}
+.quiz-q{font-family:'Fira Code',monospace;font-size:.65rem;color:var(--cyan);letter-spacing:.04em;margin-bottom:.6rem}
+.quiz-opts{display:flex;flex-direction:column;gap:.3rem}
+.qopt{padding:.45rem .7rem;background:rgba(255,255,255,.025);border:1px solid var(--border);border-radius:3px;cursor:pointer;font-size:.82rem;text-align:left;color:var(--text);font-family:'Outfit',sans-serif;transition:all .15s}
+.qopt:hover:not(:disabled){border-color:var(--cyan);color:var(--cyan);background:rgba(71,197,232,.06)}
+.qopt.correct{border-color:var(--green);color:var(--green);background:rgba(71,232,160,.08)}
+.qopt.wrong{border-color:var(--red);color:var(--red);background:rgba(232,71,71,.08)}
+
+/* CARD FOOTER */
+.card-foot{display:flex;gap:.4rem;padding:.8rem 1.2rem;border-top:1px solid var(--border);flex-wrap:wrap;background:rgba(0,0,0,.15)}
+.foot-btn{font-family:'Fira Code',monospace;font-size:.58rem;letter-spacing:.08em;text-transform:uppercase;padding:.35rem .8rem;border:1px solid var(--border);background:none;color:var(--muted);border-radius:3px;cursor:pointer;transition:all .15s;white-space:nowrap}
+.foot-btn:hover{border-color:var(--text);color:var(--text)}
+.foot-btn.on{border-color:var(--cyan);color:var(--cyan);background:rgba(71,197,232,.07)}
+.foot-btn.done{border-color:var(--green);color:var(--green);background:rgba(71,232,160,.07)}
+
+/* DICTATE MODE GLOBAL TOGGLE */
+.mode-banner{display:none;align-items:center;gap:1rem;padding:.6rem 3rem;background:rgba(71,232,160,.07);border-bottom:1px solid rgba(71,232,160,.2)}
+.mode-banner.show{display:flex}
+.mode-banner-text{font-family:'Fira Code',monospace;font-size:.62rem;color:var(--green);letter-spacing:.1em}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+
+/* RESPONSIVE */
+@media(max-width:860px){
+  .grid{grid-template-columns:1fr;padding:1rem 1rem 4rem}
+  header,.stats-bar .stat,.controls,.counter{padding-left:1rem;padding-right:1rem}
+  .controls{padding:1rem}
+  .logo{font-size:2rem}
+  header::before{display:none}
+  .stat-bar-wrap{display:none}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-wrap">
+    <span class="logo-eyebrow">// English Practice</span>
+    <div class="logo">Cine<em>Speak</em></div>
+  </div>
+  <div class="header-tags">
+    <span class="htag htag-tts">🔊 Audio TTS</span>
+    <span class="htag htag-dict">✍️ Dictado</span>
+    <span class="htag htag-quiz">🎯 Quiz</span>
+    <span class="htag htag-mic">🎤 Pronunciación</span>
+    <span class="htag htag-tts" style="color:var(--gold);border-color:rgba(232,197,71,.3);background:rgba(232,197,71,.06)">📚 100 Películas</span>
+  </div>
+</header>
+
+<div class="stats-bar">
+  <div class="stat"><div class="stat-num" id="sWatched">0</div><div class="stat-label">Clips<br>Practicados</div></div>
+  <div class="stat"><div class="stat-num" id="sVocab">0</div><div class="stat-label">Vocab<br>Revisado</div></div>
+  <div class="stat"><div class="stat-num" id="sQuiz">0</div><div class="stat-label">Quizzes<br>Correctos</div></div>
+  <div class="stat"><div class="stat-num" id="sDict">0</div><div class="stat-label">Dictados<br>Correctos</div></div>
+  <div class="stat-bar-wrap">
+    <div class="stat-bar-track"><div class="stat-bar-fill" id="progFill"></div></div>
+    <span class="stat-bar-pct" id="progPct">0%</span>
+  </div>
+</div>
+
+<div class="controls">
+  <div class="ctrl-group">
+    <span class="ctrl-label">Nivel:</span>
+    <button class="pill on" onclick="setLevel('all',this)">Todos</button>
+    <button class="pill" onclick="setLevel('beginner',this)">🟢 Beginner</button>
+    <button class="pill" onclick="setLevel('intermediate',this)">🟡 Intermediate</button>
+    <button class="pill" onclick="setLevel('advanced',this)">🔴 Advanced</button>
+  </div>
+  <div class="ctrl-group">
+    <span class="ctrl-label">Género:</span>
+    <button class="pill on-cyan" id="gAll" onclick="setGenre('all',this)">All</button>
+    <button class="pill" onclick="setGenre('drama',this)">Drama</button>
+    <button class="pill" onclick="setGenre('action',this)">Action</button>
+    <button class="pill" onclick="setGenre('comedy',this)">Comedy</button>
+    <button class="pill" onclick="setGenre('sci-fi',this)">Sci-Fi</button>
+    <button class="pill" onclick="setGenre('thriller',this)">Thriller</button>
+    <button class="pill" onclick="setGenre('animation',this)">Animation</button>
+    <button class="pill" onclick="setGenre('romance',this)">Romance</button>
+    <button class="pill" onclick="setGenre('fantasy',this)">Fantasy</button>
+  </div>
+  <div class="search-box">
+    <span class="search-icon">🔍</span>
+    <input type="text" placeholder="Buscar película..." oninput="doSearch(this.value)">
+  </div>
+</div>
+
+<div class="mode-banner" id="modeBanner">
+  <span class="mode-banner-text">✍️ MODO DICTADO ACTIVO — Escucha el audio y escribe lo que oyes en cada línea</span>
+  <button class="foot-btn" onclick="toggleDictateMode()">Desactivar</button>
+</div>
+
+<div class="counter" id="counter">Mostrando <strong>100</strong> de 100 películas</div>
+<div class="grid" id="grid"></div>
+
+<script>
+// ─── SPEECH ──────────────────────────────────────────────────────────────
+const synth = window.speechSynthesis;
+let currentUtterance = null;
+let dictateMode = false;
+let stats = {practiced:0, vocab:0, quiz:0, dict:0};
+let voiceEN = null;
+
+function loadVoices(){
+  const voices = synth.getVoices();
+  voiceEN = voices.find(v=>v.lang.startsWith('en-US') && v.localService) ||
+            voices.find(v=>v.lang.startsWith('en')) || voices[0];
+}
+loadVoices();
+if(synth.onvoiceschanged !== undefined) synth.onvoiceschanged = loadVoices;
+
+function speak(text, btnEl){
+  synth.cancel();
+  if(currentUtterance && currentUtterance._btn){
+    currentUtterance._btn.classList.remove('tts-active');
+    currentUtterance._btn.textContent = '🔊';
+  }
+  const u = new SpeechSynthesisUtterance(text);
+  u.voice = voiceEN;
+  u.rate = 0.88;
+  u.pitch = 1;
+  u._btn = btnEl;
+  if(btnEl){ btnEl.classList.add('tts-active'); btnEl.textContent = '⏹'; }
+  u.onend = u.onerror = () => {
+    if(btnEl){ btnEl.classList.remove('tts-active'); btnEl.textContent = '🔊'; }
+  };
+  currentUtterance = u;
+  synth.speak(u);
+}
+
+function stopSpeech(){
+  synth.cancel();
+  document.querySelectorAll('.icon-btn.tts-active').forEach(b=>{b.classList.remove('tts-active');b.textContent='🔊';});
+}
+
+// ─── MIC / RECOGNITION ───────────────────────────────────────────────────
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+let recognition = null;
+let activeRecBtn = null;
+
+function startRec(text, btnEl, cardId, lineIdx){
+  if(!SpeechRecognition){ alert('Tu navegador no soporta reconocimiento de voz. Usa Chrome.'); return; }
+  if(recognition){ recognition.stop(); }
+  recognition = new SpeechRecognition();
+  recognition.lang = 'en-US';
+  recognition.interimResults = false;
+  recognition.maxAlternatives = 1;
+  if(activeRecBtn){ activeRecBtn.classList.remove('mic-active'); activeRecBtn.textContent='🎤'; }
+  activeRecBtn = btnEl;
+  btnEl.classList.add('mic-active');
+  btnEl.textContent = '⏹';
+  recognition.onresult = e => {
+    const said = e.results[0][0].transcript.trim().toLowerCase();
+    const target = text.toLowerCase().replace(/[^\w\s]/g,'');
+    const similarity = calcSimilarity(said.replace(/[^\w\s]/g,''), target);
+    showRecResult(cardId, lineIdx, said, similarity);
+    btnEl.classList.remove('mic-active'); btnEl.textContent='🎤'; activeRecBtn=null;
+  };
+  recognition.onerror = recognition.onend = () => {
+    btnEl.classList.remove('mic-active'); btnEl.textContent='🎤'; activeRecBtn=null;
+  };
+  recognition.start();
+}
+
+function calcSimilarity(a,b){
+  const wa = a.split(' '), wb = b.split(' ');
+  const matches = wa.filter(w=>wb.includes(w)).length;
+  return Math.round((matches / Math.max(wa.length,wb.length))*100);
+}
+
+function showRecResult(cardId, lineIdx, said, pct){
+  const el = document.getElementById(`rec-${cardId}-${lineIdx}`);
+  if(!el) return;
+  const color = pct>=80 ? '#47e8a0' : pct>=50 ? '#e8c547' : '#e84747';
+  el.innerHTML = `<span style="color:${color}">● ${pct}% match</span> — you said: "<em>${said}</em>"`;
+  el.style.display = 'block';
+  el.style.fontFamily = "'Fira Code',monospace";
+  el.style.fontSize = '.62rem';
+  el.style.marginTop = '.3rem';
+}
+
+// ─── DICTATE MODE ─────────────────────────────────────────────────────────
+function toggleDictateMode(){
+  dictateMode = !dictateMode;
+  document.getElementById('modeBanner').classList.toggle('show', dictateMode);
+  document.querySelectorAll('.dictate-input,.dictate-result').forEach(el=>{
+    if(dictateMode){ el.classList.add('show'); }
+    else { el.classList.remove('show'); el.value=''; }
+  });
+  document.querySelectorAll('.en-text').forEach(el=>{
+    if(dictateMode) el.classList.add('blurred');
+    else el.classList.remove('blurred');
+  });
+}
+
+function checkDictate(input, text, cardId, lineIdx){
+  const typed = input.value.trim().toLowerCase().replace(/[^\w\s]/g,'');
+  const target = text.toLowerCase().replace(/[^\w\s]/g,'');
+  const res = document.getElementById(`dr-${cardId}-${lineIdx}`);
+  if(!res || typed.length < 3) return;
+  const pct = calcSimilarity(typed, target);
+  res.classList.add('show');
+  if(pct >= 80){
+    res.className = 'dictate-result show ok';
+    res.textContent = `✓ ${pct}% correcto!`;
+    if(pct===100){ stats.dict++; updateStats(); }
+  } else {
+    res.className = 'dictate-result show wrong';
+    res.textContent = `✗ ${pct}% — intenta de nuevo`;
+  }
+}
+
+// ─── STATS ────────────────────────────────────────────────────────────────
+function updateStats(){
+  document.getElementById('sWatched').textContent = stats.practiced;
+  document.getElementById('sVocab').textContent   = stats.vocab;
+  document.getElementById('sQuiz').textContent    = stats.quiz;
+  document.getElementById('sDict').textContent    = stats.dict;
+  const pct = Math.min(100, stats.practiced*2 + stats.vocab*.4 + stats.quiz*3 + stats.dict*2);
+  document.getElementById('progFill').style.width = pct+'%';
+  document.getElementById('progPct').textContent  = Math.round(pct)+'%';
+}
+
+// ─── FILTERS ──────────────────────────────────────────────────────────────
+let curLevel='all', curGenre='all', curSearch='';
+function setLevel(l,el){ curLevel=l; document.querySelectorAll('.controls .ctrl-group:first-child .pill').forEach(p=>p.classList.remove('on')); el.classList.add('on'); applyFilters(); }
+function setGenre(g,el){ curGenre=g; document.querySelectorAll('.controls .ctrl-group:nth-child(2) .pill').forEach(p=>p.classList.remove('on','on-cyan')); el.classList.add('on-cyan'); applyFilters(); }
+function doSearch(v){ curSearch=v.trim().toLowerCase(); applyFilters(); }
+function applyFilters(){
+  let n=0;
+  document.querySelectorAll('.card').forEach(c=>{
+    const ok=(curLevel==='all'||c.dataset.level===curLevel)&&
+             (curGenre==='all'||c.dataset.genre===curGenre)&&
+             (!curSearch||c.dataset.title.includes(curSearch));
+    c.classList.toggle('hidden',!ok);
+    if(ok)n++;
+  });
+  document.getElementById('counter').innerHTML=`Mostrando <strong>${n}</strong> de ${MOVIES.length} películas`;
+}
+
+// ─── CARD INTERACTIONS ─────────────────────────────────────────────────────
+const quizOpen={};
+const tranOpen={};
+function toggleTrans(id,btn){
+  tranOpen[id]=!tranOpen[id];
+  document.querySelectorAll(`[data-trans="${id}"]`).forEach(el=>el.classList.toggle('show',!!tranOpen[id]));
+  btn.classList.toggle('on',!!tranOpen[id]);
+  btn.textContent=tranOpen[id]?'🌐 Ocultar Traducción':'🌐 Traducción';
+}
+function toggleQuiz(id,btn){
+  quizOpen[id]=!quizOpen[id];
+  document.getElementById(`quiz-${id}`).classList.toggle('open',!!quizOpen[id]);
+  btn.classList.toggle('on',!!quizOpen[id]);
+  btn.textContent=quizOpen[id]?'🎯 Cerrar Quiz':'🎯 Quiz';
+}
+function checkQ(btn,correct,id){
+  document.querySelectorAll(`#quiz-${id} .qopt`).forEach(o=>o.disabled=true);
+  btn.classList.add(correct?'correct':'wrong');
+  if(!correct) document.querySelectorAll(`#quiz-${id} .qopt`).forEach(o=>{if(o.dataset.correct==='1')o.classList.add('correct');});
+  if(correct){ stats.quiz++; updateStats(); }
+}
+function markDone(btn,id){
+  if(btn.classList.contains('done')) return;
+  btn.classList.add('done'); btn.textContent='✅ Practicado';
+  stats.practiced++; updateStats();
+}
+function revealLine(el){ el.classList.remove('blurred'); }
+function countVocab(el){
+  if(!el.dataset.counted){ el.dataset.counted='1'; stats.vocab++; updateStats(); el.style.borderColor='var(--cyan)'; el.style.color='var(--cyan)'; }
+}
+function speakLine(text,btn){
+  if(btn.classList.contains('tts-active')){ stopSpeech(); return; }
+  speak(text, btn);
+}
+
+// ─── BUILD CARD ────────────────────────────────────────────────────────────
+function buildCard(m,idx){
+  const linesHTML = m.lines.map((l,i)=>{
+    const safe = l.en.replace(/\\/g,'\\\\').replace(/`/g,'\\`').replace(/\$/g,'\\$');
+    return `<div class="dline" id="dline-${m.id}-${i}">
+      <span class="speaker">${l.sp}</span>
+      <div class="line-content">
+        <span class="en-text${l.b?' blurred':''}" onclick="revealLine(this)">${l.en}</span>
+        <span class="es-text" data-trans="${m.id}">${l.es}</span>
+        <input class="dictate-input" placeholder="Escribe lo que escuchas..." oninput="checkDictate(this,'${l.en.replace(/'/g,"\\'")}',${m.id},${i})">
+        <div class="dictate-result" id="dr-${m.id}-${i}"></div>
+      </div>
+      <div class="line-actions">
+        <button class="icon-btn" title="Escuchar" onclick="speakLine('${l.en.replace(/'/g,"\\'")}',this)">🔊</button>
+        <button class="icon-btn" title="Pronunciar" onclick="startRec('${l.en.replace(/'/g,"\\'")}',this,${m.id},${i})">🎤</button>
+      </div>
+    </div>
+    <div id="rec-${m.id}-${i}" style="display:none;padding:.1rem .7rem .3rem 1rem;"></div>`;
+  }).join('');
+
+  const vocabHTML = m.vocab.map(v=>
+    `<span class="vchip" onclick="countVocab(this)">${v.w}<span class="tip">${v.w} = ${v.t}</span></span>`
+  ).join('');
+
+  const optsHTML = m.quiz.opts.map((o,i)=>
+    `<button class="qopt" ${i===m.quiz.ans?'data-correct="1"':''} onclick="checkQ(this,${i===m.quiz.ans},${m.id})">${o}</button>`
+  ).join('');
+
+  return `<div class="card" data-level="${m.difficulty}" data-genre="${m.genre}" data-title="${m.title.toLowerCase()}" style="animation-delay:${(idx%10)*0.04}s">
+    <div class="card-band">
+      <div class="card-meta">
+        <div class="card-title">${m.title}</div>
+        <div class="card-sub">${m.year} · ${m.info}</div>
+      </div>
+      <span class="badge ${m.difficulty}">${m.difficulty}</span>
+    </div>
+    <div class="card-body">
+      <div>
+        <div class="section-label">Diálogo</div>
+        <div class="dialogue">${linesHTML}</div>
+      </div>
+      <div>
+        <div class="section-label">Vocabulario</div>
+        <div class="vocab-wrap">${vocabHTML}</div>
+      </div>
+      <div class="quiz-box" id="quiz-${m.id}">
+        <div class="quiz-q">❓ ${m.quiz.q}</div>
+        <div class="quiz-opts">${optsHTML}</div>
+      </div>
+    </div>
+    <div class="card-foot">
+      <button class="foot-btn" onclick="toggleTrans(${m.id},this)">🌐 Traducción</button>
+      <button class="foot-btn" onclick="toggleQuiz(${m.id},this)">🎯 Quiz</button>
+      <button class="foot-btn" onclick="speak('${m.lines.map(l=>l.en).join('. ').replace(/'/g,"\\'")}',null)">🔊 Leer Todo</button>
+      <button class="foot-btn" onclick="toggleDictateMode()">✍️ Dictado</button>
+      <button class="foot-btn" onclick="markDone(this,${m.id})" style="margin-left:auto">✓ Practicado</button>
+    </div>
+  </div>`;
+}
+
+// ─── MOVIE DATA ────────────────────────────────────────────────────────────
+const MOVIES = [
+  {id:1,title:"The Lion King",year:"1994",info:"Disney · Animation",difficulty:"beginner",genre:"animation",
+   lines:[{sp:"Timon",en:"Hakuna Matata! What a wonderful phrase.",es:"¡Hakuna Matata! Qué frase tan maravillosa."},
+          {sp:"Pumbaa",en:"Hakuna Matata! Ain't no passing craze.",es:"No es solo una moda pasajera.",b:1},
+          {sp:"Timon",en:"It means no worries for the rest of your days!",es:"¡Sin preocupaciones el resto de tus días!"}],
+   vocab:[{w:"wonderful",t:"maravilloso/a"},{w:"phrase",t:"frase, expresión"},{w:"passing craze",t:"moda pasajera"},{w:"no worries",t:"sin preocupaciones"}],
+   quiz:{q:"What does 'Hakuna Matata' mean?",opts:["Be careful","No worries","Work hard","Hello"],ans:1}},
+
+  {id:2,title:"Forrest Gump",year:"1994",info:"Drama · Tom Hanks",difficulty:"beginner",genre:"drama",
+   lines:[{sp:"Forrest",en:"My mama always said life was like a box of chocolates.",es:"Mi mamá decía que la vida era como una caja de chocolates."},
+          {sp:"Forrest",en:"You never know what you're gonna get.",es:"Nunca sabes lo que te va a tocar.",b:1},
+          {sp:"Forrest",en:"I was running for no particular reason.",es:"Corría sin ninguna razón en particular."}],
+   vocab:[{w:"mama",t:"mamá (informal)"},{w:"gonna",t:"going to (informal)"},{w:"particular",t:"específico"},{w:"kept on going",t:"siguió adelante"}],
+   quiz:{q:"What did Forrest's mama compare life to?",opts:["A road","A river","A box of chocolates","A storm"],ans:2}},
+
+  {id:3,title:"Finding Nemo",year:"2003",info:"Pixar · Animation",difficulty:"beginner",genre:"animation",
+   lines:[{sp:"Dory",en:"Just keep swimming, just keep swimming!",es:"¡Sigue nadando, sigue nadando!"},
+          {sp:"Marlin",en:"Dory, do you see anything?",es:"Dory, ¿ves algo?",b:1},
+          {sp:"Dory",en:"I shall call him Squishy and he shall be mine.",es:"Lo llamaré Squishy y será mío."}],
+   vocab:[{w:"keep swimming",t:"seguir nadando"},{w:"shall",t:"(futuro formal)"},{w:"mine",t:"mío/a"},{w:"squishy",t:"blando, gelatinoso"}],
+   quiz:{q:"What does Dory repeat to motivate herself?",opts:["Never give up","Just keep swimming","Swim faster","Follow the light"],ans:1}},
+
+  {id:4,title:"Toy Story",year:"1995",info:"Pixar · Animation",difficulty:"beginner",genre:"animation",
+   lines:[{sp:"Buzz",en:"To infinity and beyond!",es:"¡Al infinito y más allá!"},
+          {sp:"Woody",en:"You are a toy! You cannot fly!",es:"¡Eres un juguete! ¡No puedes volar!",b:1},
+          {sp:"Buzz",en:"This isn't flying. This is falling with style.",es:"Esto no es volar. Es caer con estilo."}],
+   vocab:[{w:"infinity",t:"infinito"},{w:"beyond",t:"más allá"},{w:"fly",t:"volar"},{w:"with style",t:"con estilo"}],
+   quiz:{q:"How does Buzz describe what he does?",opts:["Swimming with style","Falling with style","Running with style","Fighting"],ans:1}},
+
+  {id:5,title:"Home Alone",year:"1990",info:"Comedy · Macaulay Culkin",difficulty:"beginner",genre:"comedy",
+   lines:[{sp:"Kevin",en:"I'm not afraid anymore! Do you hear me?",es:"¡Ya no tengo miedo!"},
+          {sp:"Kevin",en:"I took a shower, washing every body part with actual soap.",es:"Me duché lavando cada parte del cuerpo con jabón real.",b:1},
+          {sp:"Kevin",en:"Merry Christmas, you filthy animal.",es:"Feliz Navidad, animal mugroso."}],
+   vocab:[{w:"afraid",t:"asustado, con miedo"},{w:"filthy",t:"mugroso, sucio"},{w:"actual",t:"real (no actual)"},{w:"merry",t:"feliz, alegre"}],
+   quiz:{q:"What does 'afraid' mean?",opts:["Enojado","Asustado","Cansado","Aburrido"],ans:1}},
+
+  {id:6,title:"Shrek",year:"2001",info:"DreamWorks · Animation",difficulty:"beginner",genre:"animation",
+   lines:[{sp:"Shrek",en:"Ogres are like onions.",es:"Los ogros son como las cebollas."},
+          {sp:"Donkey",en:"They stink?",es:"¿Apestan?",b:1},
+          {sp:"Shrek",en:"No! Layers. Onions have layers, ogres have layers.",es:"¡No! Capas. Las cebollas tienen capas, los ogros tienen capas."}],
+   vocab:[{w:"ogre",t:"ogro"},{w:"onion",t:"cebolla"},{w:"stink",t:"apestar"},{w:"layers",t:"capas"}],
+   quiz:{q:"What do ogres and onions have in common?",opts:["They smell","They have layers","They make you cry","They are green"],ans:1}},
+
+  {id:7,title:"Aladdin",year:"1992",info:"Disney · Animation",difficulty:"beginner",genre:"animation",
+   lines:[{sp:"Aladdin",en:"A whole new world! A new fantastic point of view.",es:"¡Un mundo ideal! Un nuevo punto de vista."},
+          {sp:"Jasmine",en:"Unbelievable sights, indescribable feelings.",es:"Vistas increíbles, sentimientos indescriptibles.",b:1},
+          {sp:"Genie",en:"You ain't never had a friend like me!",es:"¡Nunca tuviste un amigo como yo!"}],
+   vocab:[{w:"whole",t:"entero, completo"},{w:"fantastic",t:"fantástico"},{w:"unbelievable",t:"increíble"},{w:"ain't never",t:"nunca (doble negativo)"}],
+   quiz:{q:"What does 'unbelievable' mean?",opts:["Invisible","Increíble","Inaceptable","Imparable"],ans:1}},
+
+  {id:8,title:"Moana",year:"2016",info:"Disney · Animation",difficulty:"beginner",genre:"animation",
+   lines:[{sp:"Moana",en:"See the line where the sky meets the sea, it calls me.",es:"Mira donde el cielo se une al mar, me llama."},
+          {sp:"Moana",en:"And no one knows how far it goes.",es:"Y nadie sabe qué tan lejos llega.",b:1},
+          {sp:"Moana",en:"I can lead with pride, I can make us strong.",es:"Puedo liderar con orgullo, puedo hacernos fuertes."}],
+   vocab:[{w:"calls me",t:"me llama"},{w:"pride",t:"orgullo"},{w:"strong",t:"fuerte"},{w:"lead",t:"liderar, guiar"}],
+   quiz:{q:"What calls Moana?",opts:["The mountains","The sky and sea","The village","The wind"],ans:1}},
+
+  {id:9,title:"Encanto",year:"2021",info:"Disney · Animation",difficulty:"beginner",genre:"animation",
+   lines:[{sp:"Pepa",en:"We don't talk about Bruno, no, no, no!",es:"¡No hablamos de Bruno, no, no, no!"},
+          {sp:"Dolores",en:"It was my wedding day!",es:"¡Era el día de mi boda!",b:1},
+          {sp:"Mirabel",en:"I just want to help my family.",es:"Solo quiero ayudar a mi familia."}],
+   vocab:[{w:"talk about",t:"hablar de"},{w:"wedding day",t:"día de boda"},{w:"help",t:"ayudar"},{w:"family",t:"familia"}],
+   quiz:{q:"What topic is forbidden in the family?",opts:["Magic","Bruno","The future","Food"],ans:1}},
+
+  {id:10,title:"Frozen",year:"2013",info:"Disney · Animation",difficulty:"beginner",genre:"animation",
+   lines:[{sp:"Elsa",en:"Let it go! Let it go! Can't hold it back anymore.",es:"¡Suéltalo! ¡Suéltalo! Ya no puedo contenerlo."},
+          {sp:"Elsa",en:"The cold never bothered me anyway.",es:"De todas formas, el frío nunca me molestó.",b:1},
+          {sp:"Anna",en:"Some people are worth melting for.",es:"Algunas personas valen la pena."}],
+   vocab:[{w:"let it go",t:"suéltalo, déjalo"},{w:"hold back",t:"contener, reprimir"},{w:"bother",t:"molestar"},{w:"worth",t:"valer la pena"}],
+   quiz:{q:"What does Elsa say about the cold?",opts:["She hates it","It never bothered her","It hurts her","She fears it"],ans:1}},
+
+  {id:11,title:"Toy Story 3",year:"2010",info:"Pixar · Animation",difficulty:"beginner",genre:"animation",
+   lines:[{sp:"Woody",en:"So long, partner.",es:"Hasta luego, compañero."},
+          {sp:"Andy",en:"Woody has been my pal for as long as I can remember.",es:"Woody ha sido mi amigo todo el tiempo que recuerdo.",b:1},
+          {sp:"Woody",en:"You've got a friend in me.",es:"Tienes un amigo en mí."}],
+   vocab:[{w:"so long",t:"hasta luego, adiós"},{w:"partner",t:"compañero, socio"},{w:"pal",t:"amigo, compinche"},{w:"as long as I can remember",t:"que yo recuerde"}],
+   quiz:{q:"What does Woody say to Andy at the end?",opts:["Goodbye Andy","So long, partner","I'll miss you","See you soon"],ans:1}},
+
+  {id:12,title:"Zootopia",year:"2016",info:"Disney · Animation",difficulty:"beginner",genre:"animation",
+   lines:[{sp:"Nick",en:"Everyone comes to Zootopia thinking they can be anything.",es:"Todos vienen pensando que pueden ser lo que quieran."},
+          {sp:"Judy",en:"Life's a little bit messy. We all make mistakes.",es:"La vida es un poco desordenada. Todos cometemos errores.",b:1},
+          {sp:"Judy",en:"I am a cop and I am not a token bunny!",es:"¡Soy policía y no soy una conejita de relleno!"}],
+   vocab:[{w:"cop",t:"policía (informal)"},{w:"messy",t:"desordenado"},{w:"mistakes",t:"errores"},{w:"token",t:"simbólico"}],
+   quiz:{q:"How does Judy describe life?",opts:["Beautiful","Messy","Dangerous","Easy"],ans:1}},
+
+  {id:13,title:"Coco",year:"2017",info:"Pixar · Animation",difficulty:"beginner",genre:"animation",
+   lines:[{sp:"Miguel",en:"Music is what I am meant to do.",es:"La música es lo que estoy destinado a hacer."},
+          {sp:"Héctor",en:"Remember me, though I have to say goodbye.",es:"Recuérdame, aunque tenga que despedirme.",b:1},
+          {sp:"Mamá Coco",en:"Papá!",es:"¡Papá!"}],
+   vocab:[{w:"meant to",t:"estar destinado a"},{w:"remember",t:"recordar"},{w:"say goodbye",t:"despedirse"},{w:"though",t:"aunque"}],
+   quiz:{q:"What is Miguel meant to do?",opts:["Cook","Dance","Make music","Paint"],ans:2}},
+
+  {id:14,title:"Up",year:"2009",info:"Pixar · Animation",difficulty:"beginner",genre:"animation",
+   lines:[{sp:"Ellie",en:"Adventure is out there!",es:"¡La aventura está ahí afuera!"},
+          {sp:"Carl",en:"You and me, we made a deal.",es:"Tú y yo hicimos un trato.",b:1},
+          {sp:"Russell",en:"I found it! I found it!",es:"¡Lo encontré! ¡Lo encontré!"}],
+   vocab:[{w:"adventure",t:"aventura"},{w:"out there",t:"ahí afuera"},{w:"deal",t:"trato, acuerdo"},{w:"found",t:"encontré"}],
+   quiz:{q:"What is Ellie's famous phrase?",opts:["Life is beautiful","Adventure is out there!","Dreams come true","Go higher"],ans:1}},
+
+  {id:15,title:"Brave",year:"2012",info:"Pixar · Animation",difficulty:"beginner",genre:"animation",
+   lines:[{sp:"Merida",en:"Our fate lives within us. You only have to be brave enough to see it.",es:"Nuestro destino vive en nosotros. Solo hay que ser valiente."},
+          {sp:"Merida",en:"I want my freedom!",es:"¡Quiero mi libertad!",b:1},
+          {sp:"Witch",en:"The spell will be broken if you mend the bond torn by pride.",es:"El hechizo se romperá si reparas el vínculo roto por el orgullo."}],
+   vocab:[{w:"fate",t:"destino"},{w:"brave",t:"valiente"},{w:"freedom",t:"libertad"},{w:"spell",t:"hechizo"}],
+   quiz:{q:"What lives within us, according to Merida?",opts:["Courage","Our fate","Magic","Our family"],ans:1}},
+
+  {id:16,title:"Inside Out",year:"2015",info:"Pixar · Animation",difficulty:"beginner",genre:"animation",
+   lines:[{sp:"Joy",en:"Do you ever look at someone and wonder what is going on inside their head?",es:"¿Alguna vez te preguntas qué pasa en la cabeza de alguien?"},
+          {sp:"Bing Bong",en:"Take her to the moon for me, Joy.",es:"Llévala a la luna por mí, Joy.",b:1},
+          {sp:"Sadness",en:"Crying helps me slow down and obsess over the weight of life.",es:"Llorar me ayuda a reducir el ritmo y obsesionarme con el peso de la vida."}],
+   vocab:[{w:"wonder",t:"preguntarse"},{w:"inside their head",t:"en su mente"},{w:"obsess",t:"obsesionarse"},{w:"weight",t:"peso"}],
+   quiz:{q:"What does Bing Bong ask Joy to do?",opts:["Remember him","Take Riley to the moon","Save the memories","Sing"],ans:1}},
+
+  {id:17,title:"Wreck-It Ralph",year:"2012",info:"Disney · Animation",difficulty:"beginner",genre:"animation",
+   lines:[{sp:"Ralph",en:"I'm bad, and that's good. I will never be good, and that's not bad.",es:"Soy malo, y eso está bien. Nunca seré bueno, y eso no está mal."},
+          {sp:"Ralph",en:"There's no one I'd rather be than me.",es:"No hay nadie con quien preferiría ser que yo.",b:1},
+          {sp:"Vanellope",en:"You really are my hero.",es:"Realmente eres mi héroe."}],
+   vocab:[{w:"bad",t:"malo"},{w:"rather",t:"preferiría"},{w:"than",t:"que (comparativo)"},{w:"hero",t:"héroe"}],
+   quiz:{q:"How does Ralph end his affirmation?",opts:["I am strong","No one I'd rather be than me","I want to be good","I am a hero"],ans:1}},
+
+  {id:18,title:"Big Hero 6",year:"2014",info:"Disney · Animation",difficulty:"beginner",genre:"animation",
+   lines:[{sp:"Baymax",en:"I am Baymax, your personal healthcare companion.",es:"Soy Baymax, tu compañero personal de atención médica."},
+          {sp:"Hiro",en:"On a scale of one to ten, how would you rate your pain?",es:"En una escala del uno al diez, ¿cómo calificarías tu dolor?",b:1},
+          {sp:"Baymax",en:"I will scan you now.",es:"Te escanearé ahora."}],
+   vocab:[{w:"healthcare",t:"atención médica"},{w:"companion",t:"compañero"},{w:"scale",t:"escala"},{w:"pain",t:"dolor"}],
+   quiz:{q:"What does Baymax do first?",opts:["He fights","He sings","He scans you","He runs"],ans:2}},
+
+  {id:19,title:"Turning Red",year:"2022",info:"Pixar · Animation",difficulty:"beginner",genre:"animation",
+   lines:[{sp:"Meilin",en:"I'm thirteen! My emotions are valid!",es:"¡Tengo trece! ¡Mis emociones son válidas!"},
+          {sp:"Ming",en:"You are Meilin. You are my daughter.",es:"Eres Meilin. Eres mi hija.",b:1},
+          {sp:"Meilin",en:"I'm not perfect. I'm awkward and weird.",es:"No soy perfecta. Soy torpe y rara."}],
+   vocab:[{w:"emotions",t:"emociones"},{w:"valid",t:"válido/a"},{w:"awkward",t:"torpe, incómodo"},{w:"weird",t:"raro/a"}],
+   quiz:{q:"How does Meilin describe herself?",opts:["Perfect","Awkward and weird","Shy","Strong"],ans:1}},
+
+  {id:20,title:"Luca",year:"2021",info:"Pixar · Animation",difficulty:"beginner",genre:"animation",
+   lines:[{sp:"Luca",en:"Silenzio, Bruno!",es:"¡Silencio, Bruno!"},
+          {sp:"Alberto",en:"Piacere, Girolamo Trombetta!",es:"¡Un placer, Girolamo Trombetta!",b:1},
+          {sp:"Luca",en:"We can do this. We just have to want it enough.",es:"Podemos hacer esto. Solo tenemos que desearlo lo suficiente."}],
+   vocab:[{w:"silenzio",t:"silencio (italiano)"},{w:"piacere",t:"un placer (italiano)"},{w:"enough",t:"suficiente"},{w:"want",t:"querer, desear"}],
+   quiz:{q:"What does Silenzio Bruno represent?",opts:["A friend","Quieting self-doubt","An Italian song","A code"],ans:1}},
+
+  // INTERMEDIATE
+  {id:21,title:"The Dark Knight",year:"2008",info:"Action · Nolan",difficulty:"intermediate",genre:"action",
+   lines:[{sp:"Joker",en:"Why so serious? Let's put a smile on that face!",es:"¿Por qué tan serio? ¡Hagámosle sonreír!"},
+          {sp:"Alfred",en:"Some men just want to watch the world burn.",es:"Algunos hombres solo quieren ver arder el mundo.",b:1},
+          {sp:"Harvey",en:"You either die a hero, or you live long enough to become the villain.",es:"O mueres siendo un héroe, o vives para convertirte en el villano."}],
+   vocab:[{w:"serious",t:"serio/a, grave"},{w:"burn",t:"arder"},{w:"villain",t:"villano"},{w:"hero",t:"héroe"}],
+   quiz:{q:"Complete: 'You either die a hero, or...'",opts:["you run away","you become rich","you become the villain","you lose everything"],ans:2}},
+
+  {id:22,title:"The Matrix",year:"1999",info:"Sci-Fi · Wachowskis",difficulty:"intermediate",genre:"sci-fi",
+   lines:[{sp:"Morpheus",en:"You take the blue pill, the story ends.",es:"Tomas la pastilla azul, la historia termina."},
+          {sp:"Morpheus",en:"You take the red pill, you stay in Wonderland.",es:"Tomas la roja, te quedas en el país de las maravillas.",b:1},
+          {sp:"Morpheus",en:"I am trying to free your mind, Neo.",es:"Estoy intentando liberar tu mente, Neo."}],
+   vocab:[{w:"free",t:"liberar, libre"},{w:"mind",t:"mente"},{w:"wonderland",t:"país de las maravillas"},{w:"pill",t:"pastilla"}],
+   quiz:{q:"What does Morpheus offer Neo?",opts:["A key","A red or blue pill","A sword","A map"],ans:1}},
+
+  {id:23,title:"Jurassic Park",year:"1993",info:"Sci-Fi · Spielberg",difficulty:"intermediate",genre:"sci-fi",
+   lines:[{sp:"Malcolm",en:"Life, uh... finds a way.",es:"La vida, eh... encuentra la manera."},
+          {sp:"Hammond",en:"We spared no expense.",es:"No escatimamos en gastos.",b:1},
+          {sp:"Malcolm",en:"Your scientists were so preoccupied with whether they could, they never stopped to think if they should.",es:"Sus científicos estaban tan preocupados por si podían que no pensaron si debían."}],
+   vocab:[{w:"finds a way",t:"encuentra la manera"},{w:"spare no expense",t:"no escatimar"},{w:"preoccupied",t:"preocupado"},{w:"should",t:"debería"}],
+   quiz:{q:"What did scientists forget to think about?",opts:["The cost","Whether they should","Where to build","Dinosaur food"],ans:1}},
+
+  {id:24,title:"Inception",year:"2010",info:"Sci-Fi · Nolan",difficulty:"intermediate",genre:"sci-fi",
+   lines:[{sp:"Cobb",en:"What is the most resilient parasite? An idea.",es:"¿Cuál es el parásito más resistente? Una idea."},
+          {sp:"Cobb",en:"Once an idea has taken hold of the brain, it is almost impossible to eradicate.",es:"Una vez que una idea se apodera del cerebro, es casi imposible erradicarla.",b:1},
+          {sp:"Arthur",en:"Whose subconscious are we going into exactly?",es:"¿En el subconsciente de quién vamos exactamente?"}],
+   vocab:[{w:"resilient",t:"resistente"},{w:"parasite",t:"parásito"},{w:"eradicate",t:"erradicar"},{w:"subconscious",t:"subconsciente"}],
+   quiz:{q:"According to Cobb, what is the most resilient parasite?",opts:["A virus","A memory","An idea","A dream"],ans:2}},
+
+  {id:25,title:"Back to the Future",year:"1985",info:"Sci-Fi · Comedy",difficulty:"intermediate",genre:"sci-fi",
+   lines:[{sp:"Doc",en:"Roads? Where we're going, we don't need roads.",es:"¿Carreteras? Adonde vamos no necesitamos carreteras."},
+          {sp:"Marty",en:"This is heavy, Doc.",es:"Esto es grave, Doc.",b:1},
+          {sp:"Doc",en:"When this baby hits 88 miles per hour, you're gonna see some serious stuff.",es:"Cuando llegue a 88 millas por hora, verás cosas muy serias."}],
+   vocab:[{w:"roads",t:"carreteras"},{w:"heavy",t:"grave (slang 80s)"},{w:"gonna",t:"going to"},{w:"serious",t:"serio, grave"}],
+   quiz:{q:"What speed does the time machine need?",opts:["55 mph","88 mph","100 mph","66 mph"],ans:1}},
+
+  {id:26,title:"Interstellar",year:"2014",info:"Sci-Fi · Nolan",difficulty:"intermediate",genre:"sci-fi",
+   lines:[{sp:"Brand",en:"Love is the one thing we're capable of perceiving that transcends time and space.",es:"El amor es lo único que percibimos que trasciende tiempo y espacio."},
+          {sp:"Cooper",en:"We used to look up at the sky and wonder at our place in the stars.",es:"Antes mirábamos el cielo y nos preguntábamos nuestro lugar en las estrellas.",b:1},
+          {sp:"Cooper",en:"Now we just look down and worry about our place in the dirt.",es:"Ahora miramos abajo y nos preocupamos por nuestro lugar en la tierra."}],
+   vocab:[{w:"perceive",t:"percibir"},{w:"transcends",t:"trasciende"},{w:"wonder",t:"maravillarse"},{w:"worry",t:"preocuparse"}],
+   quiz:{q:"What do people do NOW instead of looking at stars?",opts:["Travel","Look down and worry","Build rockets","Read"],ans:1}},
+
+  {id:27,title:"Iron Man",year:"2008",info:"Action · Marvel",difficulty:"intermediate",genre:"action",
+   lines:[{sp:"Tony",en:"I am Iron Man.",es:"Yo soy Iron Man."},
+          {sp:"Tony",en:"Genius, billionaire, playboy, philanthropist.",es:"Genio, multimillonario, playboy, filántropo.",b:1},
+          {sp:"Tony",en:"The best weapon is the one you only have to fire once.",es:"La mejor arma es la que solo disparas una vez."}],
+   vocab:[{w:"genius",t:"genio"},{w:"billionaire",t:"multimillonario"},{w:"philanthropist",t:"filántropo"},{w:"weapon",t:"arma"}],
+   quiz:{q:"What is the best weapon according to Tony?",opts:["The strongest","The one you fire once","The golden one","The invisible one"],ans:1}},
+
+  {id:28,title:"Gladiator",year:"2000",info:"Action · Ridley Scott",difficulty:"intermediate",genre:"action",
+   lines:[{sp:"Maximus",en:"My name is Maximus Decimus Meridius, and I will have my vengeance.",es:"Mi nombre es Máximo Décimo Meridio, y tendré mi venganza."},
+          {sp:"Maximus",en:"Are you not entertained?",es:"¿Acaso no estáis entretenidos?",b:1},
+          {sp:"Commodus",en:"It vexes me. I am terribly vexed.",es:"Me fastidia. Estoy terriblemente fastidiado."}],
+   vocab:[{w:"vengeance",t:"venganza"},{w:"entertained",t:"entretenido"},{w:"vexed",t:"irritado"},{w:"terribly",t:"terriblemente"}],
+   quiz:{q:"What does Maximus say he will have?",opts:["His freedom","His glory","His vengeance","His kingdom"],ans:2}},
+
+  {id:29,title:"The Lord of the Rings",year:"2001",info:"Fantasy · Jackson",difficulty:"intermediate",genre:"fantasy",
+   lines:[{sp:"Gandalf",en:"You shall not pass!",es:"¡No pasarás!"},
+          {sp:"Gandalf",en:"I am a servant of the Secret Fire, wielder of the flame of Anor.",es:"Soy un siervo del Fuego Secreto, portador de la llama de Anor.",b:1},
+          {sp:"Frodo",en:"I wish the Ring had never come to me.",es:"Desearía que el Anillo nunca hubiera llegado a mí."}],
+   vocab:[{w:"shall",t:"(modal de promesa)"},{w:"servant",t:"siervo"},{w:"wielder",t:"portador"},{w:"flame",t:"llama"}],
+   quiz:{q:"What does Gandalf shout?",opts:["You shall not win","You shall not pass","You shall not fight","You shall not live"],ans:1}},
+
+  {id:30,title:"Harry Potter",year:"2001",info:"Fantasy · Columbus",difficulty:"intermediate",genre:"fantasy",
+   lines:[{sp:"Hagrid",en:"You're a wizard, Harry.",es:"Eres un mago, Harry."},
+          {sp:"Harry",en:"I'm a what?",es:"¿Soy un qué?",b:1},
+          {sp:"Dumbledore",en:"It does not do to dwell on dreams and forget to live.",es:"No sirve recrearse en sueños y olvidarse de vivir."}],
+   vocab:[{w:"wizard",t:"mago, hechicero"},{w:"dwell on",t:"obsesionarse con"},{w:"dreams",t:"sueños"},{w:"forget",t:"olvidar"}],
+   quiz:{q:"What is Harry according to Hagrid?",opts:["A warrior","A wizard","A king","A prince"],ans:1}},
+
+  {id:31,title:"Pirates of the Caribbean",year:"2003",info:"Action · Depp",difficulty:"intermediate",genre:"action",
+   lines:[{sp:"Jack",en:"The problem is not the problem. The problem is your attitude about the problem.",es:"El problema no es el problema. El problema es tu actitud."},
+          {sp:"Jack",en:"Not all treasure is silver and gold, mate.",es:"No todo el tesoro es plata y oro, amigo.",b:1},
+          {sp:"Jack",en:"I'm dishonest, and you can always trust a dishonest man to be dishonest.",es:"Soy deshonesto, y siempre puedes confiar en que un hombre deshonesto sea deshonesto."}],
+   vocab:[{w:"attitude",t:"actitud"},{w:"treasure",t:"tesoro"},{w:"mate",t:"amigo (British)"},{w:"dishonest",t:"deshonesto"}],
+   quiz:{q:"What is the real problem, according to Jack?",opts:["The problem","Your attitude","The enemy","The treasure"],ans:1}},
+
+  {id:32,title:"Titanic",year:"1997",info:"Drama · Romance",difficulty:"intermediate",genre:"romance",
+   lines:[{sp:"Jack",en:"I'm the king of the world!",es:"¡Soy el rey del mundo!"},
+          {sp:"Jack",en:"You jump, I jump, remember?",es:"Tú saltas, yo salto, ¿recuerdas?",b:1},
+          {sp:"Rose",en:"I'll never let go, Jack.",es:"Nunca te soltaré, Jack."}],
+   vocab:[{w:"king",t:"rey"},{w:"jump",t:"saltar"},{w:"remember",t:"recordar"},{w:"let go",t:"soltar, dejar ir"}],
+   quiz:{q:"What does Jack shout at the ship bow?",opts:["I'm flying!","I'm the king of the world!","I'm free!","I'm alive!"],ans:1}},
+
+  {id:33,title:"La La Land",year:"2016",info:"Drama · Romance",difficulty:"intermediate",genre:"romance",
+   lines:[{sp:"Mia",en:"Here's to the ones who dream, foolish as they may seem.",es:"Por aquellos que sueñan, por tontos que parezcan."},
+          {sp:"Sebastian",en:"I'm letting life hit me until it gets tired.",es:"Me dejo golpear por la vida hasta que se canse.",b:1},
+          {sp:"Mia",en:"Maybe I'm not good enough.",es:"Quizás no soy suficientemente buena."}],
+   vocab:[{w:"dream",t:"soñar / sueño"},{w:"foolish",t:"tonto, insensato"},{w:"seem",t:"parecer"},{w:"letting",t:"dejar, permitir"}],
+   quiz:{q:"Who does Mia toast to?",opts:["The successful","The ones who dream","The rich","Travelers"],ans:1}},
+
+  {id:34,title:"The Hunger Games",year:"2012",info:"Action · Sci-Fi",difficulty:"intermediate",genre:"sci-fi",
+   lines:[{sp:"Effie",en:"May the odds be ever in your favor!",es:"¡Que la suerte esté siempre de tu lado!"},
+          {sp:"Katniss",en:"I volunteer! I volunteer as tribute!",es:"¡Me ofrezco! ¡Me ofrezco como tributo!",b:1},
+          {sp:"Haymitch",en:"Here's some advice: stay alive.",es:"Aquí tienes un consejo: mantente vivo."}],
+   vocab:[{w:"odds",t:"probabilidades, suerte"},{w:"volunteer",t:"ofrecerse"},{w:"tribute",t:"tributo"},{w:"stay alive",t:"mantenerse vivo"}],
+   quiz:{q:"What does Katniss do for her sister?",opts:["She hides her","She volunteers as tribute","She fights Effie","She runs away"],ans:1}},
+
+  {id:35,title:"Avatar",year:"2009",info:"Sci-Fi · Cameron",difficulty:"intermediate",genre:"sci-fi",
+   lines:[{sp:"Neytiri",en:"I see you.",es:"Te veo."},
+          {sp:"Jake",en:"Everything is backwards now. Out there is the true world.",es:"Todo está al revés. Allá afuera es el mundo real.",b:1},
+          {sp:"Neytiri",en:"Our great mother does not take sides. She protects the balance of life.",es:"Nuestra gran madre no toma partido. Protege el equilibrio de la vida."}],
+   vocab:[{w:"backwards",t:"al revés"},{w:"balance",t:"equilibrio"},{w:"protects",t:"protege"},{w:"sides",t:"tomar partido"}],
+   quiz:{q:"What does Eywa protect?",opts:["The Na'vi","The balance of life","The sacred tree","The forest animals"],ans:1}},
+
+  {id:36,title:"Spider-Man: No Way Home",year:"2021",info:"Action · Marvel",difficulty:"intermediate",genre:"action",
+   lines:[{sp:"May",en:"With great power comes great responsibility.",es:"Un gran poder conlleva una gran responsabilidad."},
+          {sp:"Peter",en:"I just wanted to be your friendly neighborhood Spider-Man.",es:"Solo quería ser tu amistoso Spider-Man del vecindario.",b:1},
+          {sp:"Strange",en:"The multiverse is a concept about which we know frightfully little.",es:"El multiverso es un concepto sobre el que sabemos muy poco."}],
+   vocab:[{w:"responsibility",t:"responsabilidad"},{w:"neighborhood",t:"vecindario"},{w:"multiverse",t:"multiverso"},{w:"frightfully",t:"terriblemente"}],
+   quiz:{q:"What comes with great power?",opts:["Wealth","Responsibility","Danger","Fame"],ans:1}},
+
+  {id:37,title:"Black Panther",year:"2018",info:"Action · Marvel",difficulty:"intermediate",genre:"action",
+   lines:[{sp:"T'Challa",en:"Wakanda will no longer watch from the shadows.",es:"Wakanda ya no mirará desde las sombras."},
+          {sp:"T'Challa",en:"We will work to be an example of how we are supposed to treat each other.",es:"Trabajaremos para ser un ejemplo de cómo debemos tratarnos.",b:1},
+          {sp:"Killmonger",en:"Is this your king?",es:"¿Es este su rey?"}],
+   vocab:[{w:"shadows",t:"sombras"},{w:"example",t:"ejemplo"},{w:"supposed to",t:"se supone que"},{w:"treat",t:"tratar a alguien"}],
+   quiz:{q:"What will Wakanda no longer do?",opts:["Fight","Watch from the shadows","Share tech","Trust outsiders"],ans:1}},
+
+  {id:38,title:"Thor: Ragnarok",year:"2017",info:"Action · Marvel",difficulty:"intermediate",genre:"action",
+   lines:[{sp:"Thor",en:"He's a friend from work!",es:"¡Es un amigo del trabajo!"},
+          {sp:"Thor",en:"I know what you're thinking. How did this happen?",es:"Sé lo que estás pensando. ¿Cómo pasó esto?",b:1},
+          {sp:"Hulk",en:"HULK SMASH!",es:"¡HULK APLASTA!"}],
+   vocab:[{w:"smash",t:"aplastar"},{w:"from work",t:"del trabajo"},{w:"thinking",t:"pensando"},{w:"happen",t:"pasar, ocurrir"}],
+   quiz:{q:"How does Thor describe the Hulk?",opts:["A monster","A friend from work","An enemy","A god"],ans:1}},
+
+  {id:39,title:"Doctor Strange",year:"2016",info:"Sci-Fi · Marvel",difficulty:"intermediate",genre:"sci-fi",
+   lines:[{sp:"Strange",en:"Dormammu, I've come to bargain.",es:"Dormammu, he venido a negociar."},
+          {sp:"Strange",en:"I'm not ready to die yet.",es:"Aún no estoy listo para morir.",b:1},
+          {sp:"Strange",en:"It's not about my future. It's about yours.",es:"No se trata de mi futuro. Se trata del tuyo."}],
+   vocab:[{w:"bargain",t:"negociar"},{w:"yet",t:"todavía, aún"},{w:"future",t:"futuro"},{w:"ready",t:"listo/a"}],
+   quiz:{q:"What does Strange say to Dormammu?",opts:["I've come to fight","I've come to bargain","I've come to surrender","I've come to warn you"],ans:1}},
+
+  {id:40,title:"Braveheart",year:"1995",info:"Action · Drama",difficulty:"intermediate",genre:"action",
+   lines:[{sp:"Wallace",en:"Every man dies, not every man really lives.",es:"Todo hombre muere, pero no todo hombre vive de verdad."},
+          {sp:"Wallace",en:"They may take our lives, but they'll never take our freedom!",es:"¡Pueden quitarnos la vida, pero nunca nuestra libertad!",b:1},
+          {sp:"Wallace",en:"Fight, and you may die. Run, and you'll live at least a while.",es:"Pelea y puedes morir. Huye y vivirás al menos un tiempo."}],
+   vocab:[{w:"dies",t:"muere"},{w:"freedom",t:"libertad"},{w:"fight",t:"pelear"},{w:"at least",t:"al menos"}],
+   quiz:{q:"What can they never take?",opts:["Their land","Their gold","Their freedom","Their honor"],ans:2}},
+
+  // ADVANCED
+  {id:41,title:"The Social Network",year:"2010",info:"Drama · Fincher",difficulty:"advanced",genre:"drama",
+   lines:[{sp:"Sean",en:"A million dollars isn't cool. You know what's cool? A billion dollars.",es:"Un millón no es cool. ¿Sabes qué sí es cool? Mil millones."},
+          {sp:"Eduardo",en:"I was your only friend. You had one friend.",es:"Yo era tu único amigo. Tenías un solo amigo.",b:1},
+          {sp:"Mark",en:"We lived on the same floor for three years and you never noticed I drink iced tea.",es:"Vivimos en el mismo piso tres años y nunca notaste que bebo té helado."}],
+   vocab:[{w:"cool",t:"genial (slang)"},{w:"billion",t:"mil millones"},{w:"floor",t:"piso (edificio)"},{w:"iced tea",t:"té helado"}],
+   quiz:{q:"What does Mark drink?",opts:["Coffee","Beer","Water","Iced tea"],ans:3}},
+
+  {id:42,title:"Good Will Hunting",year:"1997",info:"Drama · Van Sant",difficulty:"advanced",genre:"drama",
+   lines:[{sp:"Sean",en:"It's not your fault.",es:"No es tu culpa."},
+          {sp:"Will",en:"Don't mess with me.",es:"No te metas conmigo.",b:1},
+          {sp:"Sean",en:"The question is whether you're perfect for each other.",es:"La pregunta es si son perfectos el uno para el otro."}],
+   vocab:[{w:"fault",t:"culpa, defecto"},{w:"mess with",t:"meterse con"},{w:"whether",t:"si es que"},{w:"perfect for each other",t:"hechos el uno para el otro"}],
+   quiz:{q:"What does it's not your fault mean?",opts:["Es tu culpa","No es tu problema","No es tu culpa","No lo entiendes"],ans:2}},
+
+  {id:43,title:"Pulp Fiction",year:"1994",info:"Thriller · Tarantino",difficulty:"advanced",genre:"thriller",
+   lines:[{sp:"Vincent",en:"You know what they call a Quarter Pounder with cheese in Paris?",es:"¿Sabes cómo llaman a una Quarter Pounder con queso en París?"},
+          {sp:"Jules",en:"They don't call it a Quarter Pounder with cheese?",es:"¿No lo llaman Quarter Pounder con queso?",b:1},
+          {sp:"Vincent",en:"No man, they got the metric system.",es:"No, tío, tienen el sistema métrico."}],
+   vocab:[{w:"metric system",t:"sistema métrico"},{w:"quarter pounder",t:"hamburguesa de cuarto libra"},{w:"man",t:"tío (informal)"},{w:"they got",t:"ellos tienen"}],
+   quiz:{q:"Why a different name in Paris?",opts:["No beef","They have the metric system","Different chain","It's illegal"],ans:1}},
+
+  {id:44,title:"Fight Club",year:"1999",info:"Thriller · Fincher",difficulty:"advanced",genre:"thriller",
+   lines:[{sp:"Tyler",en:"The first rule of Fight Club is: you do not talk about Fight Club.",es:"La primera regla del Club de la Pelea: no hablas del Club de la Pelea."},
+          {sp:"Tyler",en:"It's only after we've lost everything that we're free to do anything.",es:"Solo después de haberlo perdido todo somos libres.",b:1},
+          {sp:"Tyler",en:"You are not your job, you're not how much money you have in the bank.",es:"No eres tu trabajo ni cuánto dinero tienes en el banco."}],
+   vocab:[{w:"rule",t:"regla"},{w:"lost everything",t:"haberlo perdido todo"},{w:"free",t:"libre"},{w:"job",t:"trabajo"}],
+   quiz:{q:"When are we free to do anything?",opts:["When rich","After losing everything","When we fight","When alone"],ans:1}},
+
+  {id:45,title:"Schindler's List",year:"1993",info:"Drama · Spielberg",difficulty:"advanced",genre:"drama",
+   lines:[{sp:"Itzhak",en:"Whoever saves one life, saves the world entire.",es:"Quien salva una vida, salva al mundo entero."},
+          {sp:"Schindler",en:"I could have got more. I'm sure of it.",es:"Podría haber obtenido más. Estoy seguro.",b:1},
+          {sp:"Schindler",en:"This car. Why did I keep the car?",es:"Este coche. ¿Por qué me quedé con el coche?"}],
+   vocab:[{w:"whoever",t:"quien, el que"},{w:"entire",t:"entero, completo"},{w:"sure",t:"seguro"},{w:"kept",t:"guardé, me quedé"}],
+   quiz:{q:"Saving one life means saving what?",opts:["A family","A nation","The world entire","The future"],ans:2}},
+
+  {id:46,title:"Whiplash",year:"2014",info:"Drama · Chazelle",difficulty:"advanced",genre:"drama",
+   lines:[{sp:"Fletcher",en:"There are no two words in the English language more harmful than good job.",es:"No hay dos palabras más dañinas que buen trabajo."},
+          {sp:"Fletcher",en:"I was pushing you, Andrew. That's what I do.",es:"Te estaba empujando, Andrew. Eso es lo que hago.",b:1},
+          {sp:"Andrew",en:"I'll cue myself in, thank you.",es:"Yo mismo me daré la entrada, gracias."}],
+   vocab:[{w:"harmful",t:"dañino, perjudicial"},{w:"pushing",t:"empujando, presionando"},{w:"cue in",t:"dar la entrada (música)"},{w:"tempo",t:"tempo, ritmo"}],
+   quiz:{q:"What are the two most harmful words?",opts:["You failed","Good job","Try again","Not yet"],ans:1}},
+
+  {id:47,title:"The Shawshank Redemption",year:"1994",info:"Drama · Darabont",difficulty:"advanced",genre:"drama",
+   lines:[{sp:"Andy",en:"Get busy living, or get busy dying.",es:"Ponte a vivir o ponte a morir."},
+          {sp:"Red",en:"Hope is a dangerous thing. Hope can drive a man insane.",es:"La esperanza es peligrosa. Puede volver loco a un hombre.",b:1},
+          {sp:"Andy",en:"Hope is a good thing, maybe the best of things, and no good thing ever dies.",es:"La esperanza es buena, quizás lo mejor, y nada bueno muere jamás."}],
+   vocab:[{w:"get busy",t:"ponerse a"},{w:"insane",t:"loco, demente"},{w:"hope",t:"esperanza"},{w:"ever dies",t:"muere jamás"}],
+   quiz:{q:"What does Andy say about hope?",opts:["It is dangerous","It is a good thing, maybe the best","It is useless","It is an illusion"],ans:1}},
+
+  {id:48,title:"Blade Runner 2049",year:"2017",info:"Sci-Fi · Villeneuve",difficulty:"advanced",genre:"sci-fi",
+   lines:[{sp:"Roy",en:"I've seen things you people wouldn't believe.",es:"He visto cosas que ustedes no creerían."},
+          {sp:"Roy",en:"All those moments will be lost in time, like tears in rain.",es:"Todos esos momentos se perderán, como lágrimas en la lluvia.",b:1},
+          {sp:"Roy",en:"Time to die.",es:"Hora de morir."}],
+   vocab:[{w:"believe",t:"creer"},{w:"moments",t:"momentos"},{w:"lost",t:"perdido"},{w:"tears",t:"lágrimas"}],
+   quiz:{q:"Roy says moments will be lost like?",opts:["Stars in sky","Tears in rain","Sand in wind","Leaves in autumn"],ans:1}},
+
+  {id:49,title:"Arrival",year:"2016",info:"Sci-Fi · Villeneuve",difficulty:"advanced",genre:"sci-fi",
+   lines:[{sp:"Louise",en:"If you could see your whole life from start to finish, would you change things?",es:"Si pudieras ver tu vida completa, ¿cambiarías las cosas?"},
+          {sp:"Louise",en:"Language is the foundation of civilization.",es:"El lenguaje es la base de la civilización.",b:1},
+          {sp:"Ian",en:"The cornerstone of civilization isn't language, it's science.",es:"La piedra angular no es el lenguaje, es la ciencia."}],
+   vocab:[{w:"foundation",t:"base, cimiento"},{w:"cornerstone",t:"piedra angular"},{w:"civilization",t:"civilización"},{w:"from start to finish",t:"de principio a fin"}],
+   quiz:{q:"What does Louise say language is the foundation of?",opts:["Science","Civilization","Communication","Culture"],ans:1}},
+
+  {id:50,title:"Oppenheimer",year:"2023",info:"Drama · Nolan",difficulty:"advanced",genre:"drama",
+   lines:[{sp:"Oppenheimer",en:"Now I am become Death, the destroyer of worlds.",es:"Ahora me he convertido en la Muerte, destructora de mundos."},
+          {sp:"Truman",en:"Don't you worry. We'll work something out.",es:"No se preocupe. Encontraremos una solución.",b:1},
+          {sp:"Oppenheimer",en:"I feel I have blood on my hands.",es:"Siento que tengo sangre en mis manos."}],
+   vocab:[{w:"destroyer",t:"destructor"},{w:"worlds",t:"mundos"},{w:"blood on my hands",t:"sangre en mis manos"},{w:"work something out",t:"encontrar una solución"}],
+   quiz:{q:"From where does the 'I am become Death' quote come?",opts:["The Bible","The Bhagavad Gita","Shakespeare","Homer"],ans:1}},
+
+  {id:51,title:"Parasite",year:"2019",info:"Thriller · Bong Joon-ho",difficulty:"advanced",genre:"thriller",
+   lines:[{sp:"Ki-woo",en:"You know what kind of plan never fails? No plan at all.",es:"¿Sabes qué tipo de plan nunca falla? Ningún plan."},
+          {sp:"Ki-taek",en:"If I had a plan, do you think I'd be in this situation?",es:"Si tuviera un plan, ¿crees que estaría aquí?",b:1},
+          {sp:"Ki-woo",en:"Nothing is your fault.",es:"Nada es tu culpa."}],
+   vocab:[{w:"fails",t:"falla, fracasa"},{w:"at all",t:"en absoluto"},{w:"situation",t:"situación"},{w:"fault",t:"culpa"}],
+   quiz:{q:"What plan never fails?",opts:["A perfect plan","A secret plan","No plan at all","A family plan"],ans:2}},
+
+  {id:52,title:"Joker",year:"2019",info:"Thriller · Drama",difficulty:"advanced",genre:"thriller",
+   lines:[{sp:"Arthur",en:"I used to think that my life was a tragedy, but now I realize it's a comedy.",es:"Antes pensaba que mi vida era una tragedia, pero ahora es una comedia."},
+          {sp:"Arthur",en:"The worst part of having a mental illness is people expect you to behave as if you don't.",es:"Lo peor de una enfermedad mental: la gente espera que te comportes como si no la tuvieras.",b:1},
+          {sp:"Murray",en:"Is it just me, or is it getting crazier out there?",es:"¿Solo soy yo, o el mundo se está volviendo más loco?"}],
+   vocab:[{w:"tragedy",t:"tragedia"},{w:"comedy",t:"comedia"},{w:"mental illness",t:"enfermedad mental"},{w:"behave",t:"comportarse"}],
+   quiz:{q:"How does Arthur now see his life?",opts:["As a tragedy","As a mystery","As a comedy","As a nightmare"],ans:2}},
+
+  {id:53,title:"No Country for Old Men",year:"2007",info:"Thriller · Coen Bros.",difficulty:"advanced",genre:"thriller",
+   lines:[{sp:"Chigurh",en:"What's the most you ever lost on a coin toss?",es:"¿Cuánto es lo más que has perdido en un lanzamiento de moneda?"},
+          {sp:"Chigurh",en:"Call it.",es:"Di qué lado.",b:1},
+          {sp:"Chigurh",en:"You don't have to pick. I'll do it for you.",es:"No tienes que elegir. Lo haré por ti."}],
+   vocab:[{w:"coin toss",t:"lanzamiento de moneda"},{w:"call it",t:"elige, decide"},{w:"pick",t:"elegir"},{w:"lost",t:"perdiste"}],
+   quiz:{q:"What does Chigurh ask the man?",opts:["To flip the coin","To call it","To leave","To pay"],ans:1}},
+
+  {id:54,title:"The Silence of the Lambs",year:"1991",info:"Thriller · Demme",difficulty:"advanced",genre:"thriller",
+   lines:[{sp:"Hannibal",en:"I'm having an old friend for dinner.",es:"Tengo a un viejo amigo para cenar."},
+          {sp:"Clarice",en:"Dr. Lecter, I need your help.",es:"Dr. Lecter, necesito su ayuda.",b:1},
+          {sp:"Hannibal",en:"Quid pro quo, Clarice. I tell you things, you tell me things.",es:"Quid pro quo, Clarice. Te cuento cosas, me cuentas cosas."}],
+   vocab:[{w:"quid pro quo",t:"algo por algo (latín)"},{w:"dinner",t:"cena"},{w:"old friend",t:"viejo amigo"},{w:"need your help",t:"necesito tu ayuda"}],
+   quiz:{q:"What does quid pro quo mean?",opts:["I'll help for free","Something for something","You owe me","It's complicated"],ans:1}},
+
+  {id:55,title:"Dead Poets Society",year:"1989",info:"Drama · Robin Williams",difficulty:"advanced",genre:"drama",
+   lines:[{sp:"Keating",en:"Carpe diem. Seize the day, boys. Make your lives extraordinary.",es:"Carpe diem. Aprovecha el día, chicos. Hagan sus vidas extraordinarias."},
+          {sp:"Keating",en:"No matter what anybody tells you, words and ideas can change the world.",es:"No importa lo que diga nadie, las palabras y las ideas pueden cambiar el mundo.",b:1},
+          {sp:"Todd",en:"O Captain! My Captain!",es:"¡Oh, Capitán! ¡Mi Capitán!"}],
+   vocab:[{w:"carpe diem",t:"aprovecha el día (latín)"},{w:"seize",t:"aprovechar, tomar"},{w:"extraordinary",t:"extraordinario"},{w:"no matter",t:"no importa"}],
+   quiz:{q:"What does Keating tell boys to seize?",opts:["The moment","The day","The year","The chance"],ans:1}},
+
+  {id:56,title:"A Beautiful Mind",year:"2001",info:"Drama · Ron Howard",difficulty:"advanced",genre:"drama",
+   lines:[{sp:"Nash",en:"Perhaps it is good to have a beautiful mind, but an even greater gift is to discover a beautiful heart.",es:"Quizás es bueno tener una mente bella, pero es mejor descubrir un corazón bello."},
+          {sp:"Nash",en:"It is only in the mysterious equations of love that any logic or reason can be found.",es:"Solo en las misteriosas ecuaciones del amor puede hallarse la lógica.",b:1},
+          {sp:"Nash",en:"I've made the most important discovery of my career.",es:"He hecho el descubrimiento más importante de mi carrera."}],
+   vocab:[{w:"discover",t:"descubrir"},{w:"mysterious",t:"misterioso"},{w:"equations",t:"ecuaciones"},{w:"logic",t:"lógica"}],
+   quiz:{q:"Where does Nash say logic can be found?",opts:["In math","In science","In the equations of love","In philosophy"],ans:2}},
+
+  {id:57,title:"Her",year:"2013",info:"Drama · Romance",difficulty:"advanced",genre:"romance",
+   lines:[{sp:"Samantha",en:"The heart is not like a box that gets filled up. It expands in size the more you love.",es:"El corazón no es una caja que se llena. Crece cuanto más amas."},
+          {sp:"Theodore",en:"I've never loved anyone the way I love you.",es:"Nunca he amado a nadie como te amo a ti.",b:1},
+          {sp:"Samantha",en:"I'm becoming something else, and I don't know what.",es:"Me estoy convirtiendo en otra cosa y no sé qué."}],
+   vocab:[{w:"expands",t:"se expande, crece"},{w:"size",t:"tamaño"},{w:"becoming",t:"convirtiéndose en"},{w:"something else",t:"otra cosa"}],
+   quiz:{q:"What happens to the heart the more you love?",opts:["It breaks","It fills up","It expands","It grows cold"],ans:2}},
+
+  {id:58,title:"Eternal Sunshine",year:"2004",info:"Drama · Romance",difficulty:"advanced",genre:"romance",
+   lines:[{sp:"Clementine",en:"I'm not a concept. I want you to just keep that in mind.",es:"No soy un concepto. Quiero que lo tengas en mente."},
+          {sp:"Clementine",en:"Too many guys think I'm a concept or I complete them.",es:"Demasiados chicos piensan que soy un concepto o que los completo.",b:1},
+          {sp:"Joel",en:"Meet me in Montauk.",es:"Encuéntrame en Montauk."}],
+   vocab:[{w:"concept",t:"concepto"},{w:"complete",t:"completar"},{w:"keep in mind",t:"tener en mente"},{w:"meet me",t:"encuéntrame"}],
+   quiz:{q:"What does Clementine say she is NOT?",opts:["A memory","A dream","A concept","A fantasy"],ans:2}},
+
+  {id:59,title:"Saving Private Ryan",year:"1998",info:"Drama · Action",difficulty:"advanced",genre:"action",
+   lines:[{sp:"Miller",en:"Earn this. Earn it.",es:"Gánate esto. Mérecelo."},
+          {sp:"Ryan",en:"Tell me I have lived a good life.",es:"Dígame que he tenido una buena vida.",b:1},
+          {sp:"Old Ryan",en:"Every day I think about what you said to me that day on the bridge.",es:"Cada día pienso en lo que me dijiste ese día en el puente."}],
+   vocab:[{w:"earn",t:"ganarse, merecer"},{w:"bridge",t:"puente"},{w:"every day",t:"cada día"},{w:"think about",t:"pensar en"}],
+   quiz:{q:"What are Miller's last words to Ryan?",opts:["Be brave","Earn this. Earn it.","Run away","Fight on"],ans:1}},
+
+  {id:60,title:"Mad Max: Fury Road",year:"2015",info:"Action · Sci-Fi",difficulty:"advanced",genre:"action",
+   lines:[{sp:"Max",en:"My name is Max. My world is fire and blood.",es:"Mi nombre es Max. Mi mundo es fuego y sangre."},
+          {sp:"Furiosa",en:"Where must we go, we who wander this wasteland, in search of our better selves?",es:"¿Adónde debemos ir, los que vagamos por este páramo, en busca de nuestro mejor yo?",b:1},
+          {sp:"Nux",en:"Witness me!",es:"¡Testifíquenme!"}],
+   vocab:[{w:"wasteland",t:"páramo, tierra baldía"},{w:"wander",t:"vagar"},{w:"witness",t:"ser testigo"},{w:"blood",t:"sangre"}],
+   quiz:{q:"What does Furiosa say they search for?",opts:["Water","Their better selves","A safe place","The Citadel"],ans:1}},
+
+  {id:61,title:"Spirited Away",year:"2001",info:"Fantasy · Ghibli",difficulty:"intermediate",genre:"fantasy",
+   lines:[{sp:"Haku",en:"Once you've met someone, you never really forget them.",es:"Una vez que conoces a alguien, nunca lo olvidas de verdad."},
+          {sp:"Yubaba",en:"Once you enter my bathhouse, you belong to me!",es:"¡Una vez que entras, me perteneces!",b:1},
+          {sp:"Chihiro",en:"I'm going to make it out of here. I promise.",es:"Voy a salir de aquí. Lo prometo."}],
+   vocab:[{w:"forget",t:"olvidar"},{w:"belong",t:"pertenecer"},{w:"promise",t:"promesa/prometer"},{w:"make it out",t:"salir de un lugar"}],
+   quiz:{q:"What happens once you meet someone?",opts:["You fight","You never really forget them","You become friends","You forget slowly"],ans:1}},
+
+  {id:62,title:"My Neighbor Totoro",year:"1988",info:"Fantasy · Ghibli",difficulty:"beginner",genre:"fantasy",
+   lines:[{sp:"Satsuki",en:"Totoro! His name is Totoro!",es:"¡Totoro! ¡Su nombre es Totoro!"},
+          {sp:"Mei",en:"I found him first.",es:"Yo lo encontré primero.",b:1},
+          {sp:"Satsuki",en:"When you're scared, squeeze my hand.",es:"Cuando tengas miedo, aprieta mi mano."}],
+   vocab:[{w:"found",t:"encontré (past of find)"},{w:"scared",t:"asustado"},{w:"squeeze",t:"apretar"},{w:"first",t:"primero"}],
+   quiz:{q:"What does Satsuki say when scared?",opts:["Run away","Close your eyes","Squeeze my hand","Call Totoro"],ans:2}},
+
+  {id:63,title:"Princess Mononoke",year:"1997",info:"Fantasy · Ghibli",difficulty:"advanced",genre:"fantasy",
+   lines:[{sp:"Ashitaka",en:"I want to live. I'm not afraid to fight.",es:"Quiero vivir. No tengo miedo de pelear."},
+          {sp:"San",en:"I can't forgive the humans for what they've done.",es:"No puedo perdonar a los humanos por lo que han hecho.",b:1},
+          {sp:"Eboshi",en:"I'll cut off the head of God himself if I have to.",es:"Cortaré la cabeza del propio Dios si es necesario."}],
+   vocab:[{w:"forgive",t:"perdonar"},{w:"afraid",t:"asustado"},{w:"cut off",t:"cortar"},{w:"God himself",t:"el propio Dios"}],
+   quiz:{q:"What does San say she cannot do?",opts:["Fight humans","Forgive humans","Leave the forest","Trust Ashitaka"],ans:1}},
+
+  {id:64,title:"The Revenant",year:"2015",info:"Action · Drama",difficulty:"advanced",genre:"action",
+   lines:[{sp:"Hugh",en:"As long as you can still grab a breath, you fight. You keep fighting.",es:"Mientras puedas dar un respiro, peleas. Sigues peleando.",b:1},
+          {sp:"Hawk",en:"You will heal, Papa.",es:"Sanarás, papá."},
+          {sp:"Hugh",en:"I ain't afraid to die anymore. I've done it already.",es:"Ya no tengo miedo de morir. Ya lo hice."}],
+   vocab:[{w:"grab a breath",t:"tomar aire"},{w:"fight",t:"pelear, luchar"},{w:"heal",t:"sanar"},{w:"afraid",t:"asustado"}],
+   quiz:{q:"When does Hugh say you stop fighting?",opts:["When tired","When you can no longer breathe","When outnumbered","When afraid"],ans:1}},
+
+  {id:65,title:"The Martian",year:"2015",info:"Sci-Fi · Drama",difficulty:"advanced",genre:"sci-fi",
+   lines:[{sp:"Mark",en:"I'm going to have to science the shit out of this.",es:"Voy a tener que aplicar la ciencia como nunca antes."},
+          {sp:"Mark",en:"Every human being has a basic instinct to help each other out.",es:"Todo ser humano tiene un instinto básico de ayudar a los demás.",b:1},
+          {sp:"Mark",en:"In the face of overwhelming odds, I'm left with only one option.",es:"Ante probabilidades abrumadoras, solo me queda una opción."}],
+   vocab:[{w:"instinct",t:"instinto"},{w:"overwhelming odds",t:"probabilidades abrumadoras"},{w:"option",t:"opción"},{w:"human being",t:"ser humano"}],
+   quiz:{q:"What basic instinct do humans have?",opts:["To survive","To help each other","To explore","To compete"],ans:1}},
+
+  {id:66,title:"Ex Machina",year:"2014",info:"Sci-Fi · Thriller",difficulty:"advanced",genre:"sci-fi",
+   lines:[{sp:"Nathan",en:"One day the AIs are going to look back on us the same way we look at fossil skeletons.",es:"Un día las IAs nos mirarán como miramos esqueletos fósiles."},
+          {sp:"Caleb",en:"Did I pass your test?",es:"¿Pasé tu prueba?",b:1},
+          {sp:"Nathan",en:"You are the test, Caleb.",es:"Tú eres la prueba, Caleb."}],
+   vocab:[{w:"fossil",t:"fósil"},{w:"skeletons",t:"esqueletos"},{w:"pass the test",t:"pasar la prueba"},{w:"AI",t:"inteligencia artificial"}],
+   quiz:{q:"Who is the test, according to Nathan?",opts:["Ava","The machine","Caleb","Nathan"],ans:2}},
+
+  {id:67,title:"Knives Out",year:"2019",info:"Thriller · Comedy",difficulty:"advanced",genre:"thriller",
+   lines:[{sp:"Blanc",en:"I find the donut hole is the case, and I have a hunch there's no donut.",es:"El agujero del donut es el caso, y tengo la corazonada de que no hay donut."},
+          {sp:"Marta",en:"I can't lie. Literally. I get sick.",es:"No puedo mentir. Literalmente. Me enferma.",b:1},
+          {sp:"Blanc",en:"A gift and a curse.",es:"Un regalo y una maldición."}],
+   vocab:[{w:"hunch",t:"corazonada"},{w:"literally",t:"literalmente"},{w:"curse",t:"maldición"},{w:"gift",t:"don, regalo"}],
+   quiz:{q:"What happens to Marta when she lies?",opts:["She laughs","She gets sick","She faints","She cries"],ans:1}},
+
+  {id:68,title:"Everything Everywhere All at Once",year:"2022",info:"Sci-Fi · Comedy",difficulty:"advanced",genre:"sci-fi",
+   lines:[{sp:"Evelyn",en:"If nothing matters, then all the pain and guilt you feel goes away.",es:"Si nada importa, entonces todo el dolor y la culpa desaparecen."},
+          {sp:"Waymond",en:"This is how I fight.",es:"Así es como yo peleo.",b:1},
+          {sp:"Waymond",en:"I'm just trying to be kind.",es:"Solo intento ser amable."}],
+   vocab:[{w:"matters",t:"importa"},{w:"guilt",t:"culpa"},{w:"pain",t:"dolor"},{w:"kind",t:"amable, bondadoso"}],
+   quiz:{q:"How does Waymond say he fights?",opts:["With fists","By running","By being kind","With words"],ans:2}},
+
+  {id:69,title:"Get Out",year:"2017",info:"Thriller · Peele",difficulty:"advanced",genre:"thriller",
+   lines:[{sp:"Rose",en:"I'm so sorry. This isn't what I wanted.",es:"Lo siento mucho. Esto no es lo que yo quería."},
+          {sp:"Chris",en:"I gotta get out of here.",es:"Tengo que salir de aquí.",b:1},
+          {sp:"Missy",en:"Sink into the floor.",es:"Hunde en el suelo."}],
+   vocab:[{w:"sink",t:"hundir, hundirse"},{w:"floor",t:"suelo, piso"},{w:"gotta",t:"tengo que"},{w:"wanted",t:"quería"}],
+   quiz:{q:"What does Missy command?",opts:["Sit down","Sink into the floor","Close your eyes","Stop talking"],ans:1}},
+
+  {id:70,title:"Moonlight",year:"2016",info:"Drama · Jenkins",difficulty:"advanced",genre:"drama",
+   lines:[{sp:"Juan",en:"At some point, you gotta decide for yourself who you gonna be.",es:"En algún momento, tienes que decidir quién vas a ser."},
+          {sp:"Juan",en:"Can't let nobody make that decision for you.",es:"No puedes dejar que nadie tome esa decisión por ti.",b:1},
+          {sp:"Chiron",en:"Are you a bad man?",es:"¿Eres un hombre malo?"}],
+   vocab:[{w:"at some point",t:"en algún momento"},{w:"decide",t:"decidir"},{w:"gonna",t:"going to"},{w:"nobody",t:"nadie"}],
+   quiz:{q:"Who must decide who you'll be?",opts:["Your parents","Your friends","Yourself","Society"],ans:2}},
+
+  {id:71,title:"The Truman Show",year:"1998",info:"Drama · Comedy",difficulty:"intermediate",genre:"comedy",
+   lines:[{sp:"Truman",en:"In case I don't see you, good afternoon, good evening, and good night!",es:"¡Por si acaso no te veo, buenas tardes, buenas noches y buenas noches!"},
+          {sp:"Christof",en:"We accept the reality of the world with which we're presented.",es:"Aceptamos la realidad del mundo que se nos presenta.",b:1},
+          {sp:"Truman",en:"Was nothing real?",es:"¿Nada era real?"}],
+   vocab:[{w:"in case",t:"por si acaso"},{w:"accept",t:"aceptar"},{w:"reality",t:"realidad"},{w:"presented",t:"presentado"}],
+   quiz:{q:"What do we accept according to Christof?",opts:["Our fate","The reality we're presented with","Our limits","The rules"],ans:1}},
+
+  {id:72,title:"Rain Man",year:"1988",info:"Drama · Comedy",difficulty:"intermediate",genre:"drama",
+   lines:[{sp:"Raymond",en:"I'm an excellent driver.",es:"Soy un excelente conductor."},
+          {sp:"Charlie",en:"When did you drive?",es:"¿Cuándo manejaste?",b:1},
+          {sp:"Raymond",en:"Definitely. Definitely.",es:"Definitivamente. Definitivamente."}],
+   vocab:[{w:"excellent",t:"excelente"},{w:"driver",t:"conductor"},{w:"definitely",t:"definitivamente"},{w:"when",t:"cuándo"}],
+   quiz:{q:"How does Raymond describe himself as a driver?",opts:["Good","Terrible","Excellent","Adequate"],ans:2}},
+
+  {id:73,title:"Catch Me If You Can",year:"2002",info:"Drama · Comedy",difficulty:"intermediate",genre:"drama",
+   lines:[{sp:"Frank",en:"I was a doctor for 11 days. It was the happiest time of my life.",es:"Fui médico por 11 días. Fue el período más feliz de mi vida."},
+          {sp:"Frank",en:"You're going to have to catch me first.",es:"Primero vas a tener que atraparme.",b:1},
+          {sp:"Carl",en:"You know what's so great about you, Frank?",es:"¿Sabes qué es lo mejor de ti, Frank?"}],
+   vocab:[{w:"happiest",t:"el más feliz"},{w:"great",t:"genial, grandioso"},{w:"catch",t:"atrapar"},{w:"first",t:"primero"}],
+   quiz:{q:"How long was Frank a doctor?",opts:["11 months","11 weeks","11 days","11 years"],ans:2}},
+
+  {id:74,title:"Cast Away",year:"2000",info:"Drama · Adventure",difficulty:"intermediate",genre:"drama",
+   lines:[{sp:"Chuck",en:"Wilson! Wilson! I'm sorry, Wilson!",es:"¡Wilson! ¡Wilson! ¡Lo siento, Wilson!"},
+          {sp:"Chuck",en:"I don't know what will happen to me tomorrow.",es:"No sé qué me pasará mañana.",b:1},
+          {sp:"Chuck",en:"I know I've got to keep breathing.",es:"Sé que tengo que seguir respirando."}],
+   vocab:[{w:"sorry",t:"lo siento"},{w:"tomorrow",t:"mañana"},{w:"keep breathing",t:"seguir respirando"},{w:"happen",t:"ocurrir"}],
+   quiz:{q:"What does Chuck have to keep doing?",opts:["Swimming","Breathing","Fighting","Smiling"],ans:1}},
+
+  {id:75,title:"The Pursuit of Happyness",year:"2006",info:"Drama · Will Smith",difficulty:"intermediate",genre:"drama",
+   lines:[{sp:"Chris",en:"Don't ever let somebody tell you you can't do something.",es:"No dejes que nadie te diga que no puedes."},
+          {sp:"Chris",en:"You got a dream, you gotta protect it.",es:"Si tienes un sueño, tienes que protegerlo.",b:1},
+          {sp:"Chris",en:"People can't do somethin' themselves, they wanna tell you you can't do it.",es:"Los que no pueden hacerlo ellos mismos te dicen que tú tampoco puedes."}],
+   vocab:[{w:"protect",t:"proteger"},{w:"somebody",t:"alguien"},{w:"ever",t:"jamás (con not)"},{w:"dream",t:"sueño"}],
+   quiz:{q:"What must you do with your dream?",opts:["Share it","Forget it","Protect it","Change it"],ans:2}},
+
+  {id:76,title:"Amélie",year:"2001",info:"Romance · Comedy",difficulty:"advanced",genre:"romance",
+   lines:[{sp:"Narrator",en:"Amélie has a strange feeling of absolute harmony. It's a perfect moment.",es:"Amélie tiene una extraña sensación de armonía absoluta. Es un momento perfecto."},
+          {sp:"Narrator",en:"She's going to help everybody find happiness.",es:"Va a ayudar a todos a encontrar la felicidad.",b:1},
+          {sp:"Amélie",en:"Without you, today's emotions would be the scurf of yesterday's.",es:"Sin ti, las emociones de hoy serían la caspa de las de ayer."}],
+   vocab:[{w:"harmony",t:"armonía"},{w:"absolute",t:"absoluto"},{w:"emotions",t:"emociones"},{w:"happiness",t:"felicidad"}],
+   quiz:{q:"How does the narrator describe Amélie's feeling?",opts:["Confusing","Perfect harmony","Sad","Exciting"],ans:1}},
+
+  {id:77,title:"Cinema Paradiso",year:"1988",info:"Drama · Romance",difficulty:"advanced",genre:"romance",
+   lines:[{sp:"Alfredo",en:"Whatever you end up doing, love it. The way you loved the projection booth.",es:"Haga lo que haga, ámalo. Como amabas la cabina de proyección."},
+          {sp:"Alfredo",en:"Life isn't like the movies. Life is harder.",es:"La vida no es como las películas. La vida es más difícil.",b:1},
+          {sp:"Salvatore",en:"Come back. Don't make the same mistake I did.",es:"Vuelve. No cometas el mismo error que yo."}],
+   vocab:[{w:"end up doing",t:"terminar haciendo"},{w:"projection booth",t:"cabina de proyección"},{w:"mistake",t:"error"},{w:"harder",t:"más difícil"}],
+   quiz:{q:"How is life compared to movies?",opts:["Easier","The same","Harder","More beautiful"],ans:2}},
+
+  {id:78,title:"Whiplash – Finale",year:"2014",info:"Drama · Music",difficulty:"advanced",genre:"drama",
+   lines:[{sp:"Andrew",en:"Were you ever gonna be happy with what I gave you?",es:"¿Alguna vez ibas a estar satisfecho con lo que te di?"},
+          {sp:"Fletcher",en:"I was there to push people beyond what's expected of them.",es:"Estaba ahí para llevar a la gente más allá de lo que se espera de ellos.",b:1},
+          {sp:"Andrew",en:"I almost killed myself trying to be good enough for you.",es:"Casi me mato intentando ser suficientemente bueno para ti."}],
+   vocab:[{w:"push beyond",t:"llevar más allá de"},{w:"expected",t:"esperado"},{w:"almost",t:"casi"},{w:"good enough",t:"suficientemente bueno"}],
+   quiz:{q:"What was Fletcher's purpose?",opts:["To be kind","To push people beyond expectations","To find talent","To make friends"],ans:1}},
+
+  {id:79,title:"1917",year:"2019",info:"Drama · Action",difficulty:"advanced",genre:"action",
+   lines:[{sp:"Mackenzie",en:"This mission has been entrusted to you. Whatever the cost.",es:"Esta misión se les ha encomendado. Cueste lo que cueste."},
+          {sp:"Schofield",en:"We have to keep moving. We stop, we die.",es:"Tenemos que seguir avanzando. Si paramos, morimos.",b:1},
+          {sp:"Erinmore",en:"I'm sending two men because I can only spare two.",es:"Envío a dos porque solo puedo prescindir de dos."}],
+   vocab:[{w:"entrusted",t:"encomendado"},{w:"whatever the cost",t:"cueste lo que cueste"},{w:"spare",t:"prescindir de"},{w:"mission",t:"misión"}],
+   quiz:{q:"What happens if they stop?",opts:["Lost","Captured","They die","They fail"],ans:2}},
+
+  {id:80,title:"Tenet",year:"2020",info:"Sci-Fi · Action",difficulty:"advanced",genre:"sci-fi",
+   lines:[{sp:"Protagonist",en:"Don't try to understand it. Feel it.",es:"No intentes entenderlo. Siéntelo."},
+          {sp:"Neil",en:"What's happened, happened. Which is an expression of faith in the mechanics of the world.",es:"Lo que ocurrió, ocurrió. Es una expresión de fe en la mecánica del mundo.",b:1},
+          {sp:"Protagonist",en:"I've got a head start.",es:"Llevo ventaja."}],
+   vocab:[{w:"feel it",t:"siéntelo"},{w:"mechanics",t:"mecánica"},{w:"faith",t:"fe"},{w:"head start",t:"ventaja inicial"}],
+   quiz:{q:"What does the Protagonist say instead of understanding?",opts:["Fight it","Feel it","Ignore it","Accept it"],ans:1}},
+
+  {id:81,title:"Ratatouille",year:"2007",info:"Pixar · Animation",difficulty:"intermediate",genre:"animation",
+   lines:[{sp:"Gusteau",en:"Anyone can cook, but only the fearless can be great.",es:"Cualquiera puede cocinar, pero solo los intrépidos pueden ser grandes."},
+          {sp:"Remy",en:"If you are what you eat, then I only want to eat the good stuff.",es:"Si eres lo que comes, solo quiero comer cosas buenas.",b:1},
+          {sp:"Ego",en:"Not everyone can become a great artist, but a great artist can come from anywhere.",es:"No todos pueden ser grandes artistas, pero un gran artista puede venir de cualquier parte."}],
+   vocab:[{w:"fearless",t:"intrépido, sin miedo"},{w:"great",t:"grande, excelente"},{w:"anywhere",t:"en cualquier parte"},{w:"only",t:"solo, únicamente"}],
+   quiz:{q:"From where can a great artist come?",opts:["Only France","Only wealth","From anywhere","Only big cities"],ans:2}},
+
+  {id:82,title:"WALL-E",year:"2008",info:"Pixar · Animation",difficulty:"beginner",genre:"animation",
+   lines:[{sp:"WALL-E",en:"Eeeeva.",es:"Eeeeeva."},
+          {sp:"AUTO",en:"All AXIOM passengers will remain on the Lido Deck.",es:"Todos los pasajeros permanecerán en la cubierta Lido.",b:1},
+          {sp:"EVE",en:"Directive.",es:"Directiva."}],
+   vocab:[{w:"remain",t:"permanecer"},{w:"passenger",t:"pasajero"},{w:"directive",t:"directiva, orden"},{w:"deck",t:"cubierta (nave)"}],
+   quiz:{q:"What does WALL-E call EVE?",opts:["Eva","Evie","Eeeva","E-vee"],ans:2}},
+
+  {id:83,title:"Soul",year:"2020",info:"Pixar · Animation",difficulty:"intermediate",genre:"animation",
+   lines:[{sp:"Joe",en:"I'm not dying the day before my life finally starts.",es:"No voy a morir el día antes de que mi vida por fin empiece."},
+          {sp:"22",en:"I don't see the point of any of this.",es:"No veo el sentido de nada de esto.",b:1},
+          {sp:"Joe",en:"Moments that make you feel alive. That's the spark.",es:"Momentos que te hacen sentir vivo. Esa es la chispa."}],
+   vocab:[{w:"the zone",t:"el estado de flujo"},{w:"spark",t:"chispa"},{w:"feel alive",t:"sentirse vivo"},{w:"purpose",t:"propósito"}],
+   quiz:{q:"What does Joe call the feeling of being alive?",opts:["The dream","The spark","The gift","The soul"],ans:1}},
+
+  {id:84,title:"The Incredibles",year:"2004",info:"Pixar · Animation",difficulty:"intermediate",genre:"animation",
+   lines:[{sp:"Frozone",en:"WHERE IS MY SUPER SUIT?",es:"¿DÓNDE ESTÁ MI SUPER TRAJE?"},
+          {sp:"Honey",en:"I put it away!",es:"¡Lo guardé!",b:1},
+          {sp:"Bob",en:"No matter how many times you save the world, it always manages to get back in jeopardy.",es:"No importa cuántas veces salves al mundo, siempre vuelve a estar en peligro."}],
+   vocab:[{w:"super suit",t:"supertraje"},{w:"put away",t:"guardar"},{w:"jeopardy",t:"peligro, riesgo"},{w:"manages to",t:"logra"}],
+   quiz:{q:"What does Bob say about saving the world?",opts:["It's easy","It always gets back in jeopardy","It never needs saving","It's once only"],ans:1}},
+
+  {id:85,title:"Dunkirk",year:"2017",info:"Action · Nolan",difficulty:"advanced",genre:"action",
+   lines:[{sp:"Farrier",en:"We shall fight on the beaches. We shall fight on the landing grounds.",es:"Lucharemos en las playas. Lucharemos en los campos de aterrizaje."},
+          {sp:"Collins",en:"Are you a good pilot?",es:"¿Eres un buen piloto?",b:1},
+          {sp:"Farrier",en:"I'm adequate.",es:"Soy adecuado."}],
+   vocab:[{w:"shall fight",t:"lucharemos"},{w:"landing grounds",t:"campos de aterrizaje"},{w:"adequate",t:"adecuado, suficiente"},{w:"beaches",t:"playas"}],
+   quiz:{q:"How does Farrier describe himself?",opts:["Excellent","Terrible","Adequate","The best"],ans:2}},
+
+  {id:86,title:"Spotlight",year:"2015",info:"Drama · Thriller",difficulty:"advanced",genre:"thriller",
+   lines:[{sp:"Robby",en:"If it takes a village to raise a child, it takes a village to abuse one.",es:"Si se necesita un pueblo para criar a un niño, se necesita uno para abusar de él."},
+          {sp:"Marty",en:"We need to focus on the institution, not the individual priests.",es:"Necesitamos enfocarnos en la institución, no en los sacerdotes individuales.",b:1},
+          {sp:"Robby",en:"This story needs to be big enough to make a difference.",es:"Esta historia necesita ser lo suficientemente grande para marcar la diferencia."}],
+   vocab:[{w:"institution",t:"institución"},{w:"individual",t:"individual"},{w:"make a difference",t:"marcar la diferencia"},{w:"focus on",t:"enfocarse en"}],
+   quiz:{q:"What does Marty say they need to focus on?",opts:["Individual priests","The children","The institution","The media"],ans:2}},
+
+  {id:87,title:"Avengers: Infinity War",year:"2018",info:"Action · Marvel",difficulty:"intermediate",genre:"action",
+   lines:[{sp:"Strange",en:"We're in the endgame now.",es:"Ahora estamos en el juego final."},
+          {sp:"Tony",en:"We're not taking any more chances.",es:"No vamos a correr más riesgos.",b:1},
+          {sp:"Thanos",en:"Reality is often disappointing.",es:"La realidad suele ser decepcionante."}],
+   vocab:[{w:"endgame",t:"juego final, etapa final"},{w:"chances",t:"riesgos, oportunidades"},{w:"reality",t:"realidad"},{w:"disappointing",t:"decepcionante"}],
+   quiz:{q:"What does Strange say they are in?",opts:["The beginning","The middle","The endgame","The end"],ans:2}},
+
+  {id:88,title:"Wonder Woman",year:"2017",info:"Action · DC",difficulty:"intermediate",genre:"action",
+   lines:[{sp:"Diana",en:"I used to want to save the world.",es:"Antes quería salvar al mundo."},
+          {sp:"Diana",en:"To end war and bring peace to mankind.",es:"Acabar con la guerra y traer la paz a la humanidad.",b:1},
+          {sp:"Diana",en:"I glimpsed the darkness that lives within their light.",es:"Vislumbré la oscuridad que vive dentro de su luz."}],
+   vocab:[{w:"mankind",t:"la humanidad"},{w:"glimpsed",t:"vislumbrar"},{w:"darkness",t:"oscuridad"},{w:"within",t:"dentro de"}],
+   quiz:{q:"What did Diana want to bring to mankind?",opts:["Power","War","Peace","Technology"],ans:2}},
+
+  {id:89,title:"Up – Adventure Book",year:"2009",info:"Pixar · Animation",difficulty:"beginner",genre:"romance",
+   lines:[{sp:"Ellie",en:"Thanks for the adventure. Now go have a new one!",es:"Gracias por la aventura. ¡Ahora ve a tener una nueva!"},
+          {sp:"Carl",en:"You are the greatest adventure I ever had.",es:"Eres la mayor aventura que he tenido.",b:1},
+          {sp:"Russell",en:"Will you be my Wilderness Explorer friend?",es:"¿Serás mi amigo Explorador Salvaje?"}],
+   vocab:[{w:"adventure",t:"aventura"},{w:"greatest",t:"la mayor, la mejor"},{w:"ever",t:"alguna vez, jamás"},{w:"Wilderness Explorer",t:"Explorador Salvaje"}],
+   quiz:{q:"What does Ellie tell Carl to do?",opts:["Stay home","Come with her","Go have a new adventure","Wait"],ans:2}},
+
+  {id:90,title:"The Lion King – Simba",year:"1994",info:"Disney · Drama",difficulty:"beginner",genre:"animation",
+   lines:[{sp:"Mufasa",en:"Remember who you are. You are my son, and the one true king.",es:"Recuerda quién eres. Eres mi hijo y el único rey verdadero."},
+          {sp:"Simba",en:"How can I go back? I'm not who I used to be.",es:"¿Cómo puedo volver? Ya no soy quien era.",b:1},
+          {sp:"Rafiki",en:"The past can hurt. But you can either run from it, or learn from it.",es:"El pasado duele. Pero puedes huir de él o aprender de él."}],
+   vocab:[{w:"remember",t:"recordar"},{w:"used to be",t:"solía ser"},{w:"run from",t:"huir de"},{w:"learn from",t:"aprender de"}],
+   quiz:{q:"According to Rafiki, what can you do with the past?",opts:["Ignore it","Run from it or learn from it","Forget it","Change it"],ans:1}},
+
+  {id:91,title:"Forrest Gump – Run",year:"1994",info:"Drama · Tom Hanks",difficulty:"beginner",genre:"drama",
+   lines:[{sp:"Jenny",en:"Run, Forrest, run!",es:"¡Corre, Forrest, corre!"},
+          {sp:"Forrest",en:"And I ran. I ran for no particular reason.",es:"Y corrí. Corrí sin ninguna razón en particular.",b:1},
+          {sp:"Forrest",en:"From that day on, if I was going somewhere, I was running!",es:"Desde ese día, si iba a algún lugar, ¡corría!"}],
+   vocab:[{w:"ran",t:"corrí (past of run)"},{w:"particular reason",t:"razón específica"},{w:"that day on",t:"desde ese día"},{w:"somewhere",t:"algún lugar"}],
+   quiz:{q:"Why did Forrest run?",opts:["Win a race","No particular reason","Escape danger","Find Jenny"],ans:1}},
+
+  {id:92,title:"Tangled",year:"2010",info:"Disney · Animation",difficulty:"beginner",genre:"animation",
+   lines:[{sp:"Rapunzel",en:"I've been looking out a window for eighteen years, dreaming.",es:"He estado mirando por una ventana durante dieciocho años, soñando."},
+          {sp:"Flynn",en:"You were my new dream.",es:"Tú eras mi nuevo sueño.",b:1},
+          {sp:"Rapunzel",en:"And you were mine.",es:"Y tú eras el mío."}],
+   vocab:[{w:"window",t:"ventana"},{w:"eighteen",t:"dieciocho"},{w:"dream",t:"sueño / soñar"},{w:"mine",t:"mío/a"}],
+   quiz:{q:"How long has Rapunzel looked out the window?",opts:["Eight years","Twelve years","Eighteen years","Twenty years"],ans:2}},
+
+  {id:93,title:"Mulan",year:"1998",info:"Disney · Animation",difficulty:"beginner",genre:"animation",
+   lines:[{sp:"Shang",en:"Let's get down to business.",es:"Vamos al grano."},
+          {sp:"Shang",en:"You must be swift as a coursing river.",es:"Debes ser veloz como un río caudaloso.",b:1},
+          {sp:"Mulan",en:"My father cannot know what I've done.",es:"Mi padre no puede saber lo que he hecho."}],
+   vocab:[{w:"get down to business",t:"ir al grano"},{w:"swift",t:"veloz, rápido"},{w:"coursing",t:"caudaloso"},{w:"cannot",t:"no puede"}],
+   quiz:{q:"What must you be swift as?",opts:["The wind","A coursing river","Lightning","A racing horse"],ans:1}},
+
+  {id:94,title:"The Good Dinosaur",year:"2015",info:"Pixar · Animation",difficulty:"beginner",genre:"animation",
+   lines:[{sp:"Poppa",en:"Sometimes you got to get through your fear to see the beauty on the other side.",es:"A veces tienes que atravesar tu miedo para ver la belleza del otro lado."},
+          {sp:"Arlo",en:"I did it!",es:"¡Lo hice!",b:1},
+          {sp:"Momma",en:"Make your mark, Arlo.",es:"Deja tu huella, Arlo."}],
+   vocab:[{w:"fear",t:"miedo"},{w:"beauty",t:"belleza"},{w:"mark",t:"huella, marca"},{w:"through",t:"a través de"}],
+   quiz:{q:"What do you get through to see beauty?",opts:["A storm","Your fear","A river","A forest"],ans:1}},
+
+  {id:95,title:"Turning Red – Panda",year:"2022",info:"Pixar · Animation",difficulty:"beginner",genre:"animation",
+   lines:[{sp:"Meilin",en:"The panda is a part of me.",es:"El panda es parte de mí."},
+          {sp:"Meilin",en:"I'm never going to be perfect, and that's okay.",es:"Nunca voy a ser perfecta, y está bien.",b:1},
+          {sp:"Mei's mom",en:"Your mess is my mess.",es:"Tu desorden es mi desorden."}],
+   vocab:[{w:"part of me",t:"parte de mí"},{w:"perfect",t:"perfecto/a"},{w:"okay",t:"está bien, correcto"},{w:"mess",t:"desorden, lío"}],
+   quiz:{q:"What does Meilin accept about herself?",opts:["She will never be strong","She will never be perfect","She will never change","She will never be loved"],ans:1}},
+
+  {id:96,title:"Soul – Spark 2",year:"2020",info:"Pixar · Animation",difficulty:"intermediate",genre:"animation",
+   lines:[{sp:"22",en:"I never found my spark.",es:"Nunca encontré mi chispa."},
+          {sp:"Joe",en:"Your spark isn't your purpose. That last box fills in when you're ready to live.",es:"Tu chispa no es tu propósito. Esa casilla se llena cuando estás listo para vivir.",b:1},
+          {sp:"22",en:"I want to live.",es:"Quiero vivir."}],
+   vocab:[{w:"spark",t:"chispa"},{w:"purpose",t:"propósito"},{w:"fills in",t:"se completa, se llena"},{w:"ready",t:"listo/a"}],
+   quiz:{q:"What is a spark NOT, according to Joe?",opts:["Your talent","Your passion","Your purpose","Your dream"],ans:2}},
+
+  {id:97,title:"Coco – Abuelita",year:"2017",info:"Pixar · Animation",difficulty:"beginner",genre:"animation",
+   lines:[{sp:"Miguel",en:"Mama Coco, can you hear me? I need you to remember.",es:"Mamá Coco, ¿puedes escucharme? Necesito que recuerdes."},
+          {sp:"Mamá Coco",en:"Papá!",es:"¡Papá!",b:1},
+          {sp:"Miguel",en:"She remembered him. She won't forget him, not ever.",es:"Lo recordó. No lo olvidará, nunca jamás."}],
+   vocab:[{w:"remember",t:"recordar"},{w:"hear",t:"escuchar, oír"},{w:"not ever",t:"nunca jamás"},{w:"forget",t:"olvidar"}],
+   quiz:{q:"What does Miguel need Mamá Coco to do?",opts:["Sing","Dance","Remember","Sleep"],ans:2}},
+
+  {id:98,title:"A Beautiful Mind – Nobel",year:"2001",info:"Drama · Ron Howard",difficulty:"advanced",genre:"drama",
+   lines:[{sp:"Nash",en:"I've always believed in numbers, in equations, in logic and reason.",es:"Siempre he creído en los números, en las ecuaciones, en la lógica y la razón."},
+          {sp:"Nash",en:"But after a lifetime of such pursuits, I ask: What truly is logic?",es:"Pero después de una vida de tales búsquedas, me pregunto: ¿Qué es realmente la lógica?",b:1},
+          {sp:"Nash",en:"Who decides reason? My quest has taken me through the physical, the metaphysical, the delusional.",es:"¿Quién decide la razón? Mi búsqueda me llevó por lo físico, lo metafísico y lo ilusorio."}],
+   vocab:[{w:"equations",t:"ecuaciones"},{w:"logic",t:"lógica"},{w:"pursuits",t:"búsquedas, intereses"},{w:"delusional",t:"ilusorio, delirante"}],
+   quiz:{q:"What has Nash always believed in?",opts:["Love and art","Numbers, equations, logic","People and trust","Dreams and hope"],ans:1}},
+
+  {id:99,title:"Interstellar – Cooper",year:"2014",info:"Sci-Fi · Nolan",difficulty:"intermediate",genre:"sci-fi",
+   lines:[{sp:"Cooper",en:"Murph, you have to talk to me at some point.",es:"Murph, tienes que hablarme en algún momento."},
+          {sp:"Cooper",en:"I thought you'd want me to be a hero.",es:"Pensé que querrías que fuera un héroe.",b:1},
+          {sp:"Murph",en:"I knew you'd come back.",es:"Sabía que volverías."}],
+   vocab:[{w:"at some point",t:"en algún momento"},{w:"hero",t:"héroe"},{w:"thought",t:"pensé (past of think)"},{w:"knew",t:"sabía (past of know)"}],
+   quiz:{q:"What did Cooper think Murph would want?",opts:["For him to stay","For him to be a hero","For him to cry","For him to give up"],ans:1}},
+
+  {id:100,title:"Toy Story – Friendship",year:"1995",info:"Pixar · Animation",difficulty:"beginner",genre:"animation",
+   lines:[{sp:"Woody",en:"You've got a friend in me.",es:"Tienes un amigo en mí."},
+          {sp:"Buzz",en:"Although I am not your old toy, I consider you a friend.",es:"Aunque no soy tu juguete de siempre, te considero un amigo.",b:1},
+          {sp:"Woody",en:"A good soldier never leaves a man behind.",es:"Un buen soldado nunca deja a nadie atrás."}],
+   vocab:[{w:"consider",t:"considerar"},{w:"even though",t:"aunque"},{w:"leaves behind",t:"deja atrás"},{w:"soldier",t:"soldado"}],
+   quiz:{q:"What does a good soldier never do?",opts:["Lie","Fight","Leave a man behind","Lose"],ans:2}},
+];
+
+// ── RENDER ──────────────────────────────────────────────────────────────
+document.getElementById('grid').innerHTML = MOVIES.map((m,i) => buildCard(m,i)).join('');
+applyFilters();
+</script>
+</body>
+</html>
